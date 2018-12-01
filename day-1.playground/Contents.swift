@@ -36,7 +36,26 @@ enum Change {
 }
 
 let changes = input.components(separatedBy: .newlines).compactMap { return Change.from(string: $0) }
-let initialFrequency = 0
-let finalFrequency = changes.reduce(initialFrequency) { $1.perform(on: $0) }
+var frequency = 0
 
-print("Final frequency for Day 1-1 is \(finalFrequency)")
+var tracker = Set<Int>([frequency])
+var firstDouble: Int?
+var finalFrequency: Int?
+
+while (firstDouble == nil) {
+    for change in changes {
+        frequency = change.perform(on: frequency)
+        let (inserted, _) = tracker.insert(frequency)
+        if !inserted {
+            firstDouble = frequency
+            break
+        }
+    }
+    if finalFrequency == nil {
+        finalFrequency = frequency
+    }
+}
+
+print("Final frequency for Day 1-1 is \(finalFrequency!)")
+print("First double frequency for Day 1-2 is \(firstDouble!)")
+
