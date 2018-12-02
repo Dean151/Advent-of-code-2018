@@ -26,13 +26,30 @@ struct Box {
     func hasLetter(repeating number: Int) -> Bool {
         return occurances.contains(number)
     }
+    
+    func distance(from box: Box) -> UInt {
+        guard box.id.count == self.id.count else {
+            return UInt.max
+        }
+        
+        var distance: UInt = 0
+        for (index, char) in self.id.enumerated() {
+            let stringIndex = box.id.index(box.id.startIndex, offsetBy: index)
+            if box.id[stringIndex] != char {
+                distance += 1
+            }
+        }
+        return distance
+    }
 }
 
 var boxes2 = 0
 var boxes3 = 0
 
-for boxId in boxesIds {
-    let box = Box(id: boxId)
+// We sort boxesIds to make it easier to find the one that are identical for Day 2-2
+let boxes = boxesIds.sorted().map({ Box(id: $0) })
+
+for box in boxes {
     if box.hasLetter(repeating: 2) {
         boxes2 += 1
     }
@@ -42,3 +59,33 @@ for boxId in boxesIds {
 }
 
 print("Checksum of boxes for Day 2-1 is \(boxes2 * boxes3)")
+
+var idA = ""
+var idB = ""
+for index in 0..<boxes.count-2 {
+    let boxA = boxes[index]
+    let boxB = boxes[index+1]
+    if boxA.distance(from: boxB) == 1 {
+        idA = boxA.id
+        idB = boxB.id
+        break
+    }
+}
+
+if (idA.isEmpty || idB.isEmpty) {
+    // Sorted was not the good option : this mean that the first letter is the one that is different... Too bad
+    print("No similar ids found")
+} else {
+    print("Similar ids found: \(idA) & \(idB)")
+    
+    // Let drop the correct character
+    for (index, char) in idA.enumerated() {
+        let stringIndex = idB.index(idB.startIndex, offsetBy: index)
+        if idB[stringIndex] != char {
+            idB.remove(at: stringIndex)
+            break
+        }
+    }
+    
+    print("Similar letter of similar ids boxes for Day 2-2 are \(idB)")
+}
