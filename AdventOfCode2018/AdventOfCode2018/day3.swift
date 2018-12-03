@@ -72,21 +72,29 @@ class Day3 {
         let plans = input.components(separatedBy: .newlines).compactMap({ Plan(from: $0) })
         
         // Just keep tracking of multiple used squares
-        var used = Set<Int>()
+        var used = [Int: Int]()
         var reused = Set<Int>()
+        var integral = Set<Int>()
         
         for plan in plans {
+            var isIntegral = true
             for index in plan {
-                if used.contains(index) {
+                if let number = used[index] {
+                    isIntegral = false
+                    integral.remove(number)
                     reused.insert(index)
-                } else {
-                    used.insert(index)
                 }
+                used[index] = plan.number
+            }
+            if isIntegral {
+                integral.insert(plan.number)
             }
         }
         
         let nbUsedMoreThanOnce = reused.count
         print("There were \(nbUsedMoreThanOnce) square inches in conflicts for Day 3-1")
+        
+        print("Found sheets numbers that are complete for Day 3-2: \(integral)")
     }
 }
 
