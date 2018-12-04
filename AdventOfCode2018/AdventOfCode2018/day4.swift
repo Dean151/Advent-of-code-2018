@@ -137,5 +137,24 @@ class Day4 {
         let mostSleepedMinute = mostSleepingGuard.minutesAsleep.sorted { $0.value > $1.value }.first!.key
         print("His most sleeped minute is \(mostSleepedMinute)")
         print("Multiplication for Day 4-1 is \(mostSleepingGuard.id * mostSleepedMinute)")
+        
+        // Get the most sleeped minute for each guard
+        var guardMostSleepedMinutes = [Int: Int]()
+        for aGuard in guards {
+            guard let mostSleepedMinuteTime = aGuard.value.minutesAsleep.sorted(by: { $0.value > $1.value }).first?.value else {
+                continue
+            }
+            guardMostSleepedMinutes[aGuard.value.id] = mostSleepedMinuteTime
+        }
+        
+        print(guardMostSleepedMinutes.sorted { $0.value > $1.value })
+        
+        // Look for the one that is the most asleep in the same minute
+        let mostSleepyGuardIdInAMinute = guardMostSleepedMinutes.sorted { $0.value > $1.value }.first!.key
+        let mostSleepyGuardInAMinute = guards[mostSleepyGuardIdInAMinute]!
+        print("The most sleepy guard in the same minute is #\(mostSleepyGuardInAMinute.id)")
+        let mostSleepedMinuteInAMinute = mostSleepyGuardInAMinute.minutesAsleep.sorted { $0.value > $1.value }.first!.key
+        print("His most sleeped minute is \(mostSleepedMinuteInAMinute)")
+        print("Multiplication for Day 4-2 is \(mostSleepyGuardInAMinute.id * mostSleepedMinuteInAMinute)")
     }
 }
