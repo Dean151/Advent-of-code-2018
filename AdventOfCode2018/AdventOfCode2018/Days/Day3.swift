@@ -63,11 +63,7 @@ class Day3 {
     }
     
     static func run() {
-        let homePath = FileManager.default.homeDirectoryForCurrentUser
-        let inputPath = "Developer/Autres/Advent-of-code-2018/AdventOfCode2018/AdventOfCode2018/day3.txt"
-        let inputUrl = homePath.appendingPathComponent(inputPath)
-        let inputData = try! Data(contentsOf: inputUrl)
-        let input = String(data: inputData, encoding: .utf8)!
+        let input = try! Input.get("day3.txt")
         
         let plans = input.components(separatedBy: .newlines).compactMap({ Plan(from: $0) })
         
@@ -95,15 +91,5 @@ class Day3 {
         print("There were \(nbUsedMoreThanOnce) square inches in conflicts for Day 3-1")
         
         print("Found sheets numbers that are complete for Day 3-2: \(integral)")
-    }
-}
-
-extension NSTextCheckingResult {
-    public func group(at index: Int, in string: String) -> String {
-        let range = self.range(at: index)
-        if range.location > string.count {
-            return ""
-        }
-        return (string as NSString).substring(with: range)
     }
 }

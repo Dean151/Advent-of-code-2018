@@ -101,11 +101,7 @@ class Day4 {
     }
     
     static func run() {
-        let homePath = FileManager.default.homeDirectoryForCurrentUser
-        let inputPath = "Developer/Autres/Advent-of-code-2018/AdventOfCode2018/AdventOfCode2018/day4.txt"
-        let inputUrl = homePath.appendingPathComponent(inputPath)
-        let inputData = try! Data(contentsOf: inputUrl)
-        let input = String(data: inputData, encoding: .utf8)!
+        let input = try! Input.get("day4.txt")
         
         let events = input.components(separatedBy: .newlines)
             .compactMap({ return Event.from(string: $0) })
@@ -146,8 +142,6 @@ class Day4 {
             }
             guardMostSleepedMinutes[aGuard.value.id] = mostSleepedMinuteTime
         }
-        
-        print(guardMostSleepedMinutes.sorted { $0.value > $1.value })
         
         // Look for the one that is the most asleep in the same minute
         let mostSleepyGuardIdInAMinute = guardMostSleepedMinutes.sorted { $0.value > $1.value }.first!.key
