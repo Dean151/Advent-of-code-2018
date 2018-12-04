@@ -99,8 +99,11 @@ class Day3 {
 }
 
 extension NSTextCheckingResult {
-    func group(at index: Int, in string: String) -> String {
+    public func group(at index: Int, in string: String) -> String {
         let range = self.range(at: index)
+        if range.location > string.count {
+            return ""
+        }
         return (string as NSString).substring(with: range)
     }
 }
