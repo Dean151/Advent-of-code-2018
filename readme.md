@@ -1,12 +1,14 @@
 # Advent of code 2018
 **Made with Xcode 10.1 and Swift 4.2**
 
-## Goal
+## My goal
 Trying to solve each puzzle each day. I hope I'll have enough time and motivation to do so.
 
-## Rules
+## My own rules
 
 The puzzle will be solved in Swift ; but not in playground like last year (that was a mistake).
+
+No cheating. Many other person do the puzzle. I'll have to come up with my own solution ... or skipping a day.
 
 Some code may be reused from one day to another.
 
