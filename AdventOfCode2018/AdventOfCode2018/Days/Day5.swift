@@ -10,10 +10,8 @@ import Foundation
 
 class Day5 {
     
-    static func run() {
-        let input = try! Input.get("day5.txt")
-        var string = input.components(separatedBy: .newlines).first!
-        
+    static func reduce(string: String) -> String {
+        var string = string
         var i = string.startIndex
         while (i < string.index(before: string.endIndex)) {
             let a = Int(string[i].unicodeScalars.first!.value)
@@ -33,7 +31,29 @@ class Day5 {
                 i = string.index(after: i)
             }
         }
+        return string
+    }
+    
+    static func run() {
+        let input = try! Input.get("day5.txt")
         
-        print("Left over of the polymer for Day 5-1 is \(string.count)")
+        let string = input.components(separatedBy: .newlines).first!
+        print(string.count)
+        
+        let polymer = reduce(string: string)
+        print("Left over of the polymer for Day 5-1 is \(polymer.count)")
+        
+        // Okay, let's remove one type each time, and keep track of the shortest
+        var shortest = Int.max
+        for i in Character("A").unicodeScalars.first!.value...Character("Z").unicodeScalars.first!.value {
+            let substring = string.filter {
+                let scalar = $0.unicodeScalars.first!.value
+                return (scalar != i) && (scalar != i + 32)
+            }
+            let subpolymer = reduce(string: substring)
+            shortest = min(shortest, subpolymer.count)
+        }
+        
+        print("The shortest polymer that can be made for Day 5-2 is \(shortest)")
     }
 }
