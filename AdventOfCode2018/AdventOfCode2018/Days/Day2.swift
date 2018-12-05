@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Day2 {
+class Day2: Day {
     
     struct Box {
         let id: String
@@ -98,6 +98,5 @@ class Day2 {
             
             print("Similar letter of similar ids boxes for Day 2-2 are \(idB)")
         }
-
     }
 }

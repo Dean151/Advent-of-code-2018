@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Day5 {
+class Day5: Day {
     
     static func reduce(string: String) -> String {
         var string = string

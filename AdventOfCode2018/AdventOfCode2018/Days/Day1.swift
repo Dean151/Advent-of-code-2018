@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Day1 {
+class Day1: Day {
     
     enum Change {
         case add(value: Int)
@@ -63,7 +63,5 @@ class Day1 {
         
         print("Final frequency for Day 1-1 is \(finalFrequency!)")
         print("First double frequency for Day 1-2 is \(firstDouble!)")
-        
-
     }
 }

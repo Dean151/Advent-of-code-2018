@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Day3 {
+class Day3: Day {
     
     struct Plan: Sequence {
         let number: Int

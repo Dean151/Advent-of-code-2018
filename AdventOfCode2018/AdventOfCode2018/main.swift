@@ -8,8 +8,8 @@
 
 import Foundation
 
-// Day1.run()
-// Day2.run()
-// Day3.run()
-// Day4.run()
-Day5.run()
+Day1.solve()
+Day2.solve()
+Day3.solve()
+Day4.solve()
+Day5.solve()

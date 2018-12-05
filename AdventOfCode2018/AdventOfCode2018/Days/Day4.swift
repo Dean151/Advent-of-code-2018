@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Day4 {
+class Day4: Day {
     
     typealias Date = (month: Int, day: Int, hour: Int, minute: Int)
     

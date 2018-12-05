@@ -13,6 +13,7 @@
 		E98B3C0221B72F6B0034058B /* Day1.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3C0121B72F6B0034058B /* Day1.swift */; };
 		E98B3C0421B730C40034058B /* shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3C0321B730C30034058B /* shared.swift */; };
 		E98B3C0621B79D880034058B /* Day5.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3C0521B79D880034058B /* Day5.swift */; };
+		E98B3C0921B7A77E0034058B /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3C0821B7A77E0034058B /* Day.swift */; };
 		E9AD332F21B507C500EFD016 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD332E21B507C500EFD016 /* main.swift */; };
 		E9AD333621B507DD00EFD016 /* Day3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD333521B507DD00EFD016 /* Day3.swift */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		E98B3C0321B730C30034058B /* shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = shared.swift; sourceTree = "<group>"; };
 		E98B3C0521B79D880034058B /* Day5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day5.swift; sourceTree = "<group>"; };
 		E98B3C0721B79DB60034058B /* day5.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day5.txt; sourceTree = "<group>"; };
+		E98B3C0821B7A77E0034058B /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
 		E9AD332B21B507C500EFD016 /* AdventOfCode2018 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AdventOfCode2018; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9AD332E21B507C500EFD016 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		E9AD333521B507DD00EFD016 /* Day3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day3.swift; sourceTree = "<group>"; };
@@ -60,6 +62,7 @@
 		E98B3BF921B72D380034058B /* Days */ = {
 			isa = PBXGroup;
 			children = (
+				E98B3C0821B7A77E0034058B /* Day.swift */,
 				E98B3C0121B72F6B0034058B /* Day1.swift */,
 				E98B3BFF21B72EFD0034058B /* Day2.swift */,
 				E9AD333521B507DD00EFD016 /* Day3.swift */,
@@ -171,6 +174,7 @@
 				E98B3C0421B730C40034058B /* shared.swift in Sources */,
 				E98B3C0021B72EFD0034058B /* Day2.swift in Sources */,
 				E92AA7CD21B6635D0088E864 /* Day4.swift in Sources */,
+				E98B3C0921B7A77E0034058B /* Day.swift in Sources */,
 				E98B3BFC21B72D790034058B /* Input.swift in Sources */,
 				E98B3C0221B72F6B0034058B /* Day1.swift in Sources */,
 				E9AD332F21B507C500EFD016 /* main.swift in Sources */,
