@@ -46,7 +46,7 @@ class Day5: Day {
         // Okay, let's remove one type each time, and keep track of the shortest
         var shortest = Int.max
         for i in Character("A").unicodeScalars.first!.value...Character("Z").unicodeScalars.first!.value {
-            let substring = string.filter {
+            let substring = polymer.filter {
                 let scalar = $0.unicodeScalars.first!.value
                 return (scalar != i) && (scalar != i + 32)
             }
