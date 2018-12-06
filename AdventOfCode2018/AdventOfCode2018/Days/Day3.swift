@@ -62,9 +62,7 @@ class Day3: Day {
         }
     }
     
-    static func run() {
-        let input = try! Input.get("day3.txt")
-        
+    static func run(input: String) {
         let plans = input.components(separatedBy: .newlines).compactMap({ Plan(from: $0) })
         
         // Just keep tracking of multiple used squares

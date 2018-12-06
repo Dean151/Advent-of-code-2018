@@ -10,8 +10,7 @@ import Foundation
 
 class Input {
     
-    static let homeURL = FileManager.default.homeDirectoryForCurrentUser
-    static let inputURL = homeURL.appendingPathComponent("Developer/Autres/Advent-of-code-2018/AdventOfCode2018/AdventOfCode2018/Input/")
+    static let inputURL = URL(fileURLWithPath: #file).deletingLastPathComponent()
     
     static func get(_ file: String) throws -> String {
         let inputData = try Data(contentsOf: inputURL.appendingPathComponent(file))

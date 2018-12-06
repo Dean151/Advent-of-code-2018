@@ -10,7 +10,7 @@ import Foundation
 import QuartzCore
 
 protocol Day {
-    static func run()
+    static func run(input: String)
 }
 
 extension Day {
@@ -19,10 +19,15 @@ extension Day {
         formatter.minimumIntegerDigits = 1
         formatter.maximumFractionDigits = 3
         
+        guard let input = try? Input.get("\(Self.self).txt") else {
+            print("Could not open input file \(Self.self).txt")
+            return
+        }
+        
         print("Solving \(Self.self)")
         
         let start = CACurrentMediaTime()
-        run()
+        run(input: input)
         let end = CACurrentMediaTime()
         
         let elapsed = end - start

@@ -100,9 +100,7 @@ class Day4: Day {
         }
     }
     
-    static func run() {
-        let input = try! Input.get("day4.txt")
-        
+    static func run(input: String) {
         let events = input.components(separatedBy: .newlines)
             .compactMap({ return Event.from(string: $0) })
             .sorted(by: {

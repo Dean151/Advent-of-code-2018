@@ -38,8 +38,7 @@ class Day1: Day {
         }
     }
     
-    static func run() {
-        let input = try! Input.get("day1.txt")
+    static func run(input: String) {
         let changes = input.components(separatedBy: .newlines).compactMap { return Change.from(string: $0) }
         var frequency = 0
         

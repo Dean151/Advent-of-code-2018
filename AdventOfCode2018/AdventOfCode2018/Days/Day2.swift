@@ -48,8 +48,7 @@ class Day2: Day {
         }
     }
     
-    static func run() {
-        let input = try! Input.get("day2.txt")
+    static func run(input: String) {
         let boxesIds = input.components(separatedBy: .newlines)
         
         var boxes2 = 0

@@ -34,11 +34,8 @@ class Day5: Day {
         return string
     }
     
-    static func run() {
-        let input = try! Input.get("day5.txt")
-        
+    static func run(input: String) {
         let string = input.components(separatedBy: .newlines).first!
-        print(string.count)
         
         let polymer = reduce(string: string)
         print("Left over of the polymer for Day 5-1 is \(polymer.count)")

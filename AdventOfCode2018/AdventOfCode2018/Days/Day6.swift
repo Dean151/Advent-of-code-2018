@@ -105,8 +105,7 @@ class Day6: Day {
         }
     }
     
-    static func run() {
-        let input = try! Input.get("day6.txt")
+    static func run(input: String) {
         let points = input.components(separatedBy: .newlines)
             .enumerated()
             .compactMap { Point.from(id: $0.offset, string: $0.element) }
