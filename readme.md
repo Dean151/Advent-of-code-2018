@@ -20,11 +20,11 @@ Some attention will be ported to performance consideration, let try to make that
 
 | Day   | Computing time* | Part 1 | Part 2 |
 |-------|-----------------|--------|--------|
-| **1** | 0,091s          | 505    | 72330  |
+| **1** | 0,077s          | 505    | 72330  |
 | **2** | 0,010s          | 7776   | wlkigsqyfecjqqmnxaktdrhbz |
 | **3** | 0,317s          | 120408 | 1276   |
-| **4** | 0,026s          | 11788  | 36896  |
+| **4** | 0,025s          | 11788  | 36896  |
 | **5** | 0,330s          | 10598  | 5312   |
-| **6** | **2,638s**      | 3260   | 42535  |
+| **6** | **3,086s**      | 3260   | 42535  |
 
 \* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013
