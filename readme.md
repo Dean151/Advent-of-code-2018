@@ -25,6 +25,6 @@ Some attention will be ported to performance consideration, let try to make that
 | **3** | 0,317s          | 120408 | 1276   |
 | **4** | 0,026s          | 11788  | 36896  |
 | **5** | 0,330s          | 10598  | 5312   |
-| **6** | **1,560s**      | 3260   |        |
+| **6** | **2,638s**      | 3260   | 42535  |
 
 \* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013

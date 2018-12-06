@@ -32,6 +32,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		71CAB80221B924050092E369 /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = readme.md; path = ../readme.md; sourceTree = "<group>"; };
 		E91E39B421B8EDC00054F06D /* day6.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day6.txt; sourceTree = "<group>"; };
 		E91E39B521B8EDD80054F06D /* Day6.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day6.swift; sourceTree = "<group>"; };
 		E92AA7CC21B6635D0088E864 /* Day4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day4.swift; sourceTree = "<group>"; };
@@ -95,6 +96,7 @@
 			children = (
 				E9AD332D21B507C500EFD016 /* AdventOfCode2018 */,
 				E9AD332C21B507C500EFD016 /* Products */,
+				71CAB80221B924050092E369 /* readme.md */,
 			);
 			sourceTree = "<group>";
 		};

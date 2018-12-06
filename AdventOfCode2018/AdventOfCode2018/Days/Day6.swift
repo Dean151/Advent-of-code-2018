@@ -46,8 +46,8 @@ class Day6: Day {
             yMax = max(y, yMax)
         }
         
-        func distance(from point: Point) -> Int {
-            return abs(x - point.x) + abs(y - point.y)
+        func distance(from coords: (x: Int, y: Int)) -> Int {
+            return abs(x - coords.x) + abs(y - coords.y)
         }
     }
     
@@ -58,6 +58,13 @@ class Day6: Day {
         let height: Int
         
         var infinite: [Int] = []
+        
+        var minIndex: Int {
+            return 0
+        }
+        var maxIndex: Int {
+            return width * height - 1
+        }
         
         init(width: Int, height: Int, offset: Point) {
             self.offset = offset
@@ -80,47 +87,12 @@ class Day6: Day {
             return coords.x == offset.x || coords.y == offset.y || coords.x == width+offset.x-1 || coords.y == height+offset.y-1
         }
         
-        func point(at index: Int) -> Point {
-            let coords = self.coords(at: index)
-            return Point(id: nil, x: coords.x, y: coords.y)
-        }
-        
-        func largestNonInfiniteRegion(for points: [Point]) -> Int {
-            
-            var infinitePoints = Set<Int>()
-            var sums = [Int: Int](minimumCapacity: points.count)
-            
-            for index in 0..<width*height {
-                guard let influent = self.influent(at: index, with: points) else {
-                    continue
-                }
-                
-                if isBorder(at: index) {
-                    infinitePoints.insert(influent)
-                    sums.removeValue(forKey: influent)
-                    continue
-                }
-                
-                if infinitePoints.contains(influent) {
-                    continue
-                }
-                
-                if let value = sums[influent] {
-                    sums.updateValue(value + 1, forKey: influent)
-                } else {
-                    sums.updateValue(1, forKey: influent)
-                }
-            }
-            
-            return sums.max(by: { $0.value < $1.value })!.value
-        }
-        
-        func influent(at index: Int, with points: [Point]) -> Int? {
+        func mostInfluent(from points: [Point], at index: Int) -> Int? {
             var min = Int.max
             var influent: Int?
             
             for point in points {
-                let distance = point.distance(from: self.point(at: index))
+                let distance = point.distance(from: self.coords(at: index))
                 if distance < min {
                     min = distance
                     influent = point.id!
@@ -141,7 +113,47 @@ class Day6: Day {
         
         let grid = Grid(width: (Point.xMax - Point.xMin + 1), height: (Point.yMax - Point.xMin + 1), offset: Point(id: nil, x: Point.xMin, y: Point.yMin))
         
-        let size = grid.largestNonInfiniteRegion(for: points)
-        print("Largest non infinite area for Day 6-1 is \(size)")
+        // Part 1
+        var infinitePoints = Set<Int>()
+        var influenceSizes = [Int: Int](minimumCapacity: points.count)
+        
+        // Part 2
+        let distanceSumThresold = 10000
+        var numberOfPositionWithinThresold = 0
+        
+        for index in 0...grid.maxIndex {
+            
+            // Part 2
+            let distanceSum = points.reduce(0) { return $0 + $1.distance(from: grid.coords(at: index)) }
+            if distanceSum < distanceSumThresold {
+                numberOfPositionWithinThresold += 1
+            }
+            
+            // Part 1
+            guard let influent = grid.mostInfluent(from: points, at: index) else {
+                continue
+            }
+            
+            if grid.isBorder(at: index) {
+                infinitePoints.insert(influent)
+                influenceSizes.removeValue(forKey: influent)
+                continue
+            }
+            
+            if infinitePoints.contains(influent) {
+                continue
+            }
+            
+            if let value = influenceSizes[influent] {
+                influenceSizes.updateValue(value + 1, forKey: influent)
+            } else {
+                influenceSizes.updateValue(1, forKey: influent)
+            }
+        }
+        
+        let largestAreaSize = influenceSizes.max(by: { $0.value < $1.value })!.value
+        print("Largest non infinite area for Day 6-1 is \(largestAreaSize)")
+        
+        print("Largest non infinite area for Day 6-2 is \(numberOfPositionWithinThresold)")
     }
 }
