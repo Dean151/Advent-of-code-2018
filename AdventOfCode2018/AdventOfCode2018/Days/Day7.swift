@@ -23,6 +23,18 @@ class Day7: Day {
         mutating func requires(new: Character) {
             self.requirements.insert(new)
         }
+        
+        var executionTime: Int {
+            return Int(letter.unicodeScalars.first!.value) - 4
+        }
+    }
+    
+    class Worker {
+        var task: (letter: Character, timeRemaining: Int)?
+        
+        var isAvailable: Bool {
+            return task == nil
+        }
     }
     
     static func run(input: String) {
@@ -69,5 +81,57 @@ class Day7: Day {
         }
         
         print("Ordered steps execution for Day 7-1 is \(orders)")
+        
+        // Keep track of what have been executed.
+        var timeSpent = 0
+        nonExecuted = Set(steps.keys)
+        var nonStartedSteps = steps.values.sorted(by: { return $0.letter < $1.letter })
+        
+        // We create workers
+        var workers = [Worker]()
+        for _ in 0..<5 {
+            workers.append(Worker())
+        }
+        
+        while (!nonExecuted.isEmpty) {
+            // Assign tasks to the workers, and find the time it'll take to finish the first one.
+            workerLoop: for worker in workers.filter({ $0.isAvailable }) {
+                for (i, step) in nonStartedSteps.enumerated() {
+                    if !step.requirements.filter({ nonExecuted.contains($0) }).isEmpty {
+                        continue
+                    }
+                    // Assign the task to the worker
+                    worker.task = (letter: step.letter, timeRemaining: step.executionTime)
+                    nonStartedSteps.remove(at: i)
+                    continue workerLoop
+                }
+            }
+            
+            
+            // Find the min time to advance
+            let nextIncrement = workers
+                .compactMap({ $0.task?.timeRemaining })
+                .sorted()
+                .first!
+            
+            // Task are assigned, advance the time by the min found
+            timeSpent += nextIncrement
+            
+            // Find the tasks that have ended and carry on!
+            workers.forEach({
+                $0.task?.timeRemaining -= nextIncrement
+                guard let task = $0.task else {
+                    return
+                }
+                
+                if task.timeRemaining <= 0 {
+                    let letter = task.letter
+                    nonExecuted.remove(letter)
+                    $0.task = nil
+                }
+            })
+        }
+        
+        print("Time of execution with 5 workers for Day 7-2 is \(timeSpent)s")
     }
 }
