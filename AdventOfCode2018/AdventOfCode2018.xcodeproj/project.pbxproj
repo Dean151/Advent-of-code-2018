@@ -18,6 +18,7 @@
 		E9AD332F21B507C500EFD016 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD332E21B507C500EFD016 /* main.swift */; };
 		E9AD333621B507DD00EFD016 /* Day3.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AD333521B507DD00EFD016 /* Day3.swift */; };
 		E9F8A41721BA48C300D1B6E6 /* Day7.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F8A41621BA48C300D1B6E6 /* Day7.swift */; };
+		E9F8A41921BBF20700D1B6E6 /* Day8.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F8A41821BBF20700D1B6E6 /* Day8.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +54,8 @@
 		E9AD333721B5087300EFD016 /* day3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day3.txt; sourceTree = "<group>"; };
 		E9F8A41521BA484100D1B6E6 /* day7.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day7.txt; sourceTree = "<group>"; };
 		E9F8A41621BA48C300D1B6E6 /* Day7.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day7.swift; sourceTree = "<group>"; };
+		E9F8A41821BBF20700D1B6E6 /* Day8.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day8.swift; sourceTree = "<group>"; };
+		E9F8A41A21BBF22900D1B6E6 /* day8.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day8.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +80,7 @@
 				E98B3C0521B79D880034058B /* Day5.swift */,
 				E91E39B521B8EDD80054F06D /* Day6.swift */,
 				E9F8A41621BA48C300D1B6E6 /* Day7.swift */,
+				E9F8A41821BBF20700D1B6E6 /* Day8.swift */,
 			);
 			path = Days;
 			sourceTree = "<group>";
@@ -92,6 +96,7 @@
 				E98B3C0721B79DB60034058B /* day5.txt */,
 				E91E39B421B8EDC00054F06D /* day6.txt */,
 				E9F8A41521BA484100D1B6E6 /* day7.txt */,
+				E9F8A41A21BBF22900D1B6E6 /* day8.txt */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -188,6 +193,7 @@
 				E9F8A41721BA48C300D1B6E6 /* Day7.swift in Sources */,
 				E98B3C0021B72EFD0034058B /* Day2.swift in Sources */,
 				E92AA7CD21B6635D0088E864 /* Day4.swift in Sources */,
+				E9F8A41921BBF20700D1B6E6 /* Day8.swift in Sources */,
 				E98B3C0921B7A77E0034058B /* Day.swift in Sources */,
 				E98B3BFC21B72D790034058B /* Input.swift in Sources */,
 				E98B3C0221B72F6B0034058B /* Day1.swift in Sources */,
