@@ -23,6 +23,19 @@ class Day8: Day {
             return children.map({ $0.recursiveMetadataSum }).reduce(metadataSum, +)
         }
         
+        var value: Int {
+            if children.isEmpty {
+                return metadataSum
+            }
+            
+            return metadata.reduce(0, { carry, metadata in
+                if metadata < 1 || metadata > children.count {
+                    return carry
+                }
+                return carry + children[metadata - 1].value
+            })
+        }
+        
         static func from(numbers: [Int]) -> (node: Node, leftOver: [Int]) {
             var numbers = numbers
             
@@ -51,5 +64,7 @@ class Day8: Day {
         assert(left.isEmpty)
         
         print("Sum of all metadata for Day 8-1 is \(node.recursiveMetadataSum)")
+        
+        print("Global value for Day 8-2 is \(node.value)")
     }
 }
