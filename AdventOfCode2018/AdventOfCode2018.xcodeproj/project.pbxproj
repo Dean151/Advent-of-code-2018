@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		71BBC0D921BE5FDC00E41048 /* Day10.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BBC0D821BE5FDC00E41048 /* Day10.swift */; };
 		E91E39B621B8EDD80054F06D /* Day6.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E39B521B8EDD80054F06D /* Day6.swift */; };
 		E92AA7CD21B6635D0088E864 /* Day4.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92AA7CC21B6635D0088E864 /* Day4.swift */; };
 		E962A74C21BD113D005689DA /* Day9.swift in Sources */ = {isa = PBXBuildFile; fileRef = E962A74B21BD113D005689DA /* Day9.swift */; };
@@ -35,6 +36,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		71BBC0D721BE5FC600E41048 /* day10.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day10.txt; sourceTree = "<group>"; };
+		71BBC0D821BE5FDC00E41048 /* Day10.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day10.swift; sourceTree = "<group>"; };
 		71CAB80221B924050092E369 /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = readme.md; path = ../readme.md; sourceTree = "<group>"; };
 		E91E39B421B8EDC00054F06D /* day6.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day6.txt; sourceTree = "<group>"; };
 		E91E39B521B8EDD80054F06D /* Day6.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day6.swift; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 				E9F8A41621BA48C300D1B6E6 /* Day7.swift */,
 				E9F8A41821BBF20700D1B6E6 /* Day8.swift */,
 				E962A74B21BD113D005689DA /* Day9.swift */,
+				71BBC0D821BE5FDC00E41048 /* Day10.swift */,
 			);
 			path = Days;
 			sourceTree = "<group>";
@@ -102,6 +106,7 @@
 				E9F8A41521BA484100D1B6E6 /* day7.txt */,
 				E9F8A41A21BBF22900D1B6E6 /* day8.txt */,
 				E962A74F21BD11FD005689DA /* day9.txt */,
+				71BBC0D721BE5FC600E41048 /* day10.txt */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -192,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E98B3C0621B79D880034058B /* Day5.swift in Sources */,
+				71BBC0D921BE5FDC00E41048 /* Day10.swift in Sources */,
 				E91E39B621B8EDD80054F06D /* Day6.swift in Sources */,
 				E9AD333621B507DD00EFD016 /* Day3.swift in Sources */,
 				E98B3C0421B730C40034058B /* shared.swift in Sources */,
