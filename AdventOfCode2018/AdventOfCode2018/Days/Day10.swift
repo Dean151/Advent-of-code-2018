@@ -31,9 +31,14 @@ class Day10: Day {
         }
     }
     
-    struct Point {
-        let position: Vector
+    class Point {
+        var position: Vector
         let velocity: Vector
+        
+        init(position: Vector, velocity: Vector) {
+            self.position = position
+            self.velocity = velocity
+        }
         
         static let regex = try! NSRegularExpression(pattern: "^position=< ?(-?\\d+),  ?(-?\\d+)> velocity=< ?(-?\\d+),  ?(-?\\d+)>$", options: .caseInsensitive)
         static func from(string: String) -> Point? {
@@ -42,60 +47,65 @@ class Day10: Day {
                 return nil
             }
             
-            let x = Int(match.group(at: 2, in: string))!
-            let y = Int(match.group(at: 1, in: string))!
-            let vx = Int(match.group(at: 4, in: string))!
-            let vy = Int(match.group(at: 3, in: string))!
+            let x = Int(match.group(at: 1, in: string))!
+            let y = Int(match.group(at: 2, in: string))!
+            let vx = Int(match.group(at: 3, in: string))!
+            let vy = Int(match.group(at: 4, in: string))!
             
             let position = Vector(x: x, y: y)
             let velocity = Vector(x: vx, y: vy)
             return Point(position: position, velocity: velocity)
         }
         
-        func position(after time: Int) -> Vector {
-            return position + time * velocity
+        func run(duration: Int = 1) {
+            self.position = self.position(after: duration)
         }
         
-        func point(after time: Int) -> Point {
-            return Point(position: position(after: time), velocity: velocity)
+        func position(after time: Int) -> Vector {
+            return position + time * velocity
         }
     }
     
     class Grid: CustomStringConvertible {
-        let initialPoints: [Point]
         
+        var points: [Point]
         var time = 0
+        
         init(initialPoints points: [Point]) {
-            self.initialPoints = points
+            self.points = points
         }
         
-        var points: [Point] {
-            return initialPoints.map {
-                return $0.point(after: time)
+        var minMax: (minX: Int, minY: Int, maxX: Int, maxY: Int) {
+            var minX = Int.max
+            var maxX = 0
+            var minY = Int.max
+            var maxY = 0
+            for point in points {
+                minX = min(minX, point.position.x)
+                maxX = max(maxX, point.position.x)
+                minY = min(minY, point.position.y)
+                maxY = max(maxY, point.position.y)
             }
+            return (minX: minX, minY: minY, maxX: maxX, maxY: maxY)
         }
         
         var size: (width: Int, height: Int) {
-            let points = self.points
-            let xs = points.map { $0.position.x }
-            let ys = points.map { $0.position.y }
-            
-            return (width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
+            let (minX, minY, maxX, maxY) = minMax
+            return (width: maxX - minX, height: maxY - minY)
         }
         
         func run(duration: Int = 1) {
             time += duration
+            points.forEach { $0.run(duration: duration) }
         }
         
         var description: String {
             // Find min/max of x/y
-            let points = self.points
-            let xs = points.map { $0.position.x }
-            let ys = points.map { $0.position.y }
+            let (minX, minY, maxX, maxY) = minMax
             
             var string = "\n"
-            for x in xs.min()!...xs.max()! {
-                for y in ys.min()!...ys.max()! {
+            for y in minY...maxY {
+                for x in minX...maxX {
                     string += !points.filter({ $0.position == Vector(x: x, y: y) }).isEmpty ? "#" : "."
                 }
                 string += "\n"
@@ -116,7 +126,7 @@ class Day10: Day {
             if (newSize.height > size.height) {
                 // It's diverging !
                 // rollback once
-                grid.time -= 1
+                grid.run(duration: -1)
                 break
             }
             size = newSize
