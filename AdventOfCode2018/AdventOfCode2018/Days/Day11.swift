@@ -10,70 +10,79 @@ import Foundation
 
 class Day11: Day {
     
+    struct Square: Hashable {
+        let index: Int
+        let length: Int
+    }
+    
     class Grid {
-        let offset = (x: 1, y: 1)
-        let height = 300
-        let width = 300
+        let powerLevel: [Int: Int]
         
-        var powerLevel = [Int: Int](minimumCapacity: 300*300)
-        var powerLevel3x3 = [Int: Int](minimumCapacity: 300*300)
-        
-        func index(x: Int, y: Int) -> Int {
-            return (y - offset.y) * width + (x - offset.x)
+        static func index(x: Int, y: Int) -> Int {
+            return (y - 1) * 300 + (x - 1)
         }
         
-        func coords(at index: Int) -> (x: Int, y: Int) {
-            let x = index % width + offset.x
-            let y = ((index - (index % width)) / width) + offset.y
-            return (x: x, y: y)
+        init(serialNumber: Int) {
+            var levels = [Int: Int](minimumCapacity: 300*300)
+            for x in 1...300 {
+                for y in 1...300 {
+                    let index = Grid.index(x: x, y: y)
+                    let power = ((((x + 10) * y + serialNumber) * (x + 10) / 100) % 10) - 5
+                    levels.updateValue(power, forKey: index)
+                }
+            }
+            self.powerLevel = levels
         }
         
-        func calculate(for serialNumber: Int) {
-            powerLevel.removeAll()
-            powerLevel3x3.removeAll()
+        func calculateMax(lengths: ClosedRange<Int>) -> (x: Int, y: Int, length: Int) {
             
-            for y in 1...298 {
-                for x in 1...298 {
-                    let index = self.index(x: x, y: y)
-                    powerLevel3x3[index] = get3x3Power(at: (x: x, y: y), for: serialNumber)
+            var currentMaxResult = (x: 0, y: 0, length: 0)
+            var currentMax = Int.min
+            
+            for y in 1...300 {
+                for x in 1...300 {
+                    let lengthsRange = 1...min(301-x, 301-y)
+                    if (!lengthsRange.overlaps(lengths)) {
+                        continue
+                    }
+                    var power = 0
+                    for length in lengthsRange.clamped(to: lengths) {
+                        power += outerSquareSum(of: length, at: (x: x, y: y))
+                        if power > currentMax {
+                            currentMax = power
+                            currentMaxResult = (x: x, y: y, length: length)
+                        }
+                    }
                 }
             }
+            
+            return currentMaxResult
         }
         
-        func get3x3Power(at coords: (x: Int, y: Int), for serialNumber: Int) -> Int {
-            var power = 0
-            for y in coords.y...coords.y+2 {
-                for x in coords.x...coords.x+2 {
-                    power += getPower(at: (x: x, y: y), for: serialNumber)
-                }
+        func outerSquareSum(of length: Int, at coords: (x: Int, y: Int)) -> Int {
+            if length == 1 {
+                return powerLevel[Grid.index(x: coords.x, y: coords.y)]!
+            }
+            var power = powerLevel[Grid.index(x: coords.x + length - 1, y: coords.y + length - 1 )]!
+            for i in 0...length-2 {
+                power += powerLevel[Grid.index(x: coords.x + i, y: coords.y + length - 1)]!
+                power += powerLevel[Grid.index(x: coords.x + length - 1, y: coords.y + i)]!
             }
             return power
         }
         
-        func getPower(at coords: (x: Int, y: Int), for serialNumber: Int) -> Int {
-            let index = self.index(x: coords.x, y: coords.y)
-            if let power = powerLevel[index] {
-                return power
-            }
-            // We calculate
-            let rackId = coords.x + 10
-            let power = (((rackId * coords.y + serialNumber) * rackId / 100) % 10) - 5
-            powerLevel[index] = power
-            return power
-        }
-        
-        var max3x3power: (x: Int, y: Int, power: Int) {
-            let max = powerLevel3x3.max(by: { $0.value < $1.value })!
-            let coords = self.coords(at: max.key)
-            return (x: coords.x, y: coords.y, power: max.value)
-        }
     }
     
     static func run(input: String) {
         let serialNumber = Int(input.components(separatedBy: .whitespacesAndNewlines).first!)!
-        let grid = Grid()
-        grid.calculate(for: serialNumber)
-        let max = grid.max3x3power
-        print("The top left corner of the max of 3x3 power for Day 11-1 is \(max.x),\(max.y)")
+        let grid = Grid(serialNumber: serialNumber)
+        
+        let max3x3 = grid.calculateMax(lengths: 1...3)
+        print("The 3x3 square with max power for Day 11-1 is \(max3x3.x),\(max3x3.y)")
+        
+        // We can expect the max size to be within 1...25
+        // Based on the examples given
+        let maxAny = grid.calculateMax(lengths: 1...25)
+        print("The square with max power for Day 11-2 is \(maxAny.x),\(maxAny.y),\(maxAny.length)")
     }
 }
