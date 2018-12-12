@@ -14,7 +14,7 @@ Some code may be reused from one day to another.
 
 Not all special cases will be treated by the code.
 
-Some attention will be ported to performance consideration, let try to make that less than a second per day!
+Some attention will be ported to performance consideration, let try to make that less than 5 seconds per day!
 
 ## Puzzle solutions so far
 
@@ -25,12 +25,12 @@ Some attention will be ported to performance consideration, let try to make that
 | **3**  | 0,317s          | 120408   | 1276       |
 | **4**  | 0,025s          | 11788    | 36896      |
 | **5**  | 0,330s          | 10598    | 5312       |
-| **6**  | **3,086s**      | 3260     | 42535      |
+| **6**  | 3,086s          | 3260     | 42535      |
 | **7**  | 0,015s          | BHRTWCYSELPUVZAOIJKGMFQDXN | 959 |
 | **8**  | 0.062s          | 38780    | 18232      |
 | **9**  | **14,565s**     | 384205   | 3066307353 |
-| **10** | **1,877s**      | AHFGRKEE | 10243      |
-| **11** | **4,468s**      | 21,93    | 231,108,14 |
+| **10** | 1,877s          | AHFGRKEE | 10243      |
+| **11** | 4,468s          | 21,93    | 231,108,14 |
 | **12** | TBA             | 3337     |            |
 
 \* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013
