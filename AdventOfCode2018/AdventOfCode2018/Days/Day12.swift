@@ -61,7 +61,6 @@ class Day12: Day {
             
             if generation == 20 {
                 let sum = self.sum(for: newState, offset: offset)
-                assert(sum == 3337)
                 print("Total sum of pots containing plants for Day 12-1 is \(sum)")
             }
                 
