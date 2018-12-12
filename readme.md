@@ -20,17 +20,17 @@ Some attention will be ported to performance consideration, let try to make that
 
 | Day    | Computing time* | Part 1   | Part 2     |
 |--------|-----------------|----------|------------|
-| **1**  | 0,064s          | 505      | 72330      |
-| **2**  | 0,008s          | 7776     | wlkigsqyfecjqqmnxaktdrhbz |
-| **3**  | 0,303s          | 120408   | 1276       |
-| **4**  | 0,025s          | 11788    | 36896      |
-| **5**  | 0,310s          | 10598    | 5312       |
-| **6**  | 3,086s          | 3260     | 42535      |
-| **7**  | 0,007s          | BHRTWCYSELPUVZAOIJKGMFQDXN | 959 |
-| **8**  | 0.062s          | 38780    | 18232      |
-| **9**  | **13,805s**     | 384205   | 3066307353 |
-| **10** | 1,877s          | AHFGRKEE | 10243      |
-| **11** | 4,468s          | 21,93    | 231,108,14 |
-| **12** | 0,036s          | 3337     | 4300000000349 |
+| **1**  | 0,032s          | 505      | 72330      |
+| **2**  | 0,006s          | 7776     | wlkigsqyfecjqqmnxaktdrhbz |
+| **3**  | 0,182s          | 120408   | 1276       |
+| **4**  | 0,012s          | 11788    | 36896      |
+| **5**  | 0,143s          | 10598    | 5312       |
+| **6**  | 0,039s          | 3260     | 42535      |
+| **7**  | 0,004s          | BHRTWCYSELPUVZAOIJKGMFQDXN | 959 |
+| **8**  | 0.040s          | 38780    | 18232      |
+| **9**  | **10,779s**     | 384205   | 3066307353 |
+| **10** | 0,128s          | AHFGRKEE | 10243      |
+| **11** | 2,029s          | 21,93    | 231,108,14 |
+| **12** | 0,029s          | 3337     | 4300000000349 |
 
-\* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013
+\* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013 in "Release" mode
