@@ -28,7 +28,7 @@ Some attention will be ported to performance consideration, let try to make that
 | **6**  | 0,036s          | 3260     | 42535      |
 | **7**  | 0,004s          | BHRTWCYSELPUVZAOIJKGMFQDXN | 959 |
 | **8**  | 0.035s          | 38780    | 18232      |
-| **9**  | **3,930s**     | 384205   | 3066307353 |
+| **9**  | 3,930s          | 384205   | 3066307353 |
 | **10** | 0,104s          | AHFGRKEE | 10243      |
 | **11** | 2,023s          | 21,93    | 231,108,14 |
 | **12** | 0,029s          | 3337     | 4300000000349 |
