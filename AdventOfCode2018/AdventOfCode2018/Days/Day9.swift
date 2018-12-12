@@ -10,76 +10,49 @@ import Foundation
 
 class Day9: Day {
     
-    class Marble {
-        let value: Int
-        
-        var previous: Int
-        var next: Int
-        
-        init(value: Int, previous: Int? = nil, next: Int? = nil) {
-            self.value = value
-            self.previous = previous ?? value
-            self.next = next ?? value
-        }
-    }
-    
     struct Circle {
         
-        var currentMarbleIndex = 0
-        var marbles: [Int: Marble]
+        var current = 0
+        var marbles: [Int: (prev: Int, next: Int)]
         
         init(minimumCapacity capacity: Int) {
-            self.marbles = [Int:Marble](minimumCapacity: capacity)
+            self.marbles = [Int: (prev: Int, next: Int)](minimumCapacity: capacity)
         }
         
         var count: Int {
             return marbles.count
         }
         
-        var current: Marble? {
-            return marbles[currentMarbleIndex]
-        }
-        
         mutating func rotate(_ i: Int) {
-            if i == 0 || count == 0 {
+            if marbles.isEmpty || i == 0 {
                 return
             }
             
-            if i > 0 {
-                currentMarbleIndex = current!.next
-                rotate(i - 1)
-            } else if i < 0 {
-                currentMarbleIndex = current!.previous
-                rotate(i + 1)
+            for _ in 1...abs(i) {
+                current = marbles[current].flatMap({ i < 0 ? $0.prev : $0.next })!
             }
         }
         
         mutating func insert(_ value: Int) {
-            
-            let marble: Marble
-            if let current = current, let next = marbles[current.next] {
-                current.next = value
-                next.previous = value
-                marble = Marble(value: value, previous: current.value, next: next.value)
+            if let next = marbles[current]?.next {
+                marbles[current]?.next = value
+                marbles[value] = (prev: current, next: next)
+                marbles[next]?.prev = value
             } else {
-                marble = Marble(value: value)
+                // It's the first
+                marbles[value] = (prev: value, next: value)
             }
-            
-            marbles.updateValue(marble, forKey: value)
-            currentMarbleIndex = value
+            current = value
         }
         
         mutating func remove() -> Int {
-            guard let current = current, let next = marbles[current.next], let previous = marbles[current.previous] else {
-                fatalError("Nothing to remove!")
-            }
+            let (prev, next) = marbles[current]!
+            marbles[prev]?.next = next
+            marbles[next]?.prev = prev
             
-            next.previous = previous.value
-            previous.next = next.value
-            currentMarbleIndex = next.value
-            
-            marbles.removeValue(forKey: current.value)
-            return current.value
+            let value = current
+            current = next
+            return value
         }
         
     }
