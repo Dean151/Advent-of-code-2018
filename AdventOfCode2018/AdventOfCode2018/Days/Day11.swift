@@ -16,38 +16,45 @@ class Day11: Day {
     }
     
     class Grid {
-        let powerLevel: [Int: Int]
+        let powerSummedAreaTable: [Int: Int]
         
         static func index(x: Int, y: Int) -> Int {
+            if x < 1 || y < 1 || x > 300 || y > 300 {
+                return Int.min
+            }
             return (y - 1) * 300 + (x - 1)
         }
         
         init(serialNumber: Int) {
-            var levels = [Int: Int](minimumCapacity: 300*300)
-            for x in 1...300 {
-                for y in 1...300 {
-                    let index = Grid.index(x: x, y: y)
+            var summedAreaTable = [Int: Int](minimumCapacity: 300*300)
+            for y in 1...300 {
+                for x in 1...300 {
                     let power = ((((x + 10) * y + serialNumber) * (x + 10) / 100) % 10) - 5
-                    levels.updateValue(power, forKey: index)
+                    let b = summedAreaTable[Grid.index(x: x, y: y-1)] ?? 0
+                    let c = summedAreaTable[Grid.index(x: x-1, y: y)] ?? 0
+                    let d = summedAreaTable[Grid.index(x: x-1, y: y-1)] ?? 0
+                    summedAreaTable.updateValue(power + b + c - d, forKey: Grid.index(x: x, y: y))
                 }
             }
-            self.powerLevel = levels
+            self.powerSummedAreaTable = summedAreaTable
         }
         
-        func calculateMax(lengths: ClosedRange<Int>) -> (x: Int, y: Int, length: Int) {
+        func calculateMax(length: Int? = nil) -> (x: Int, y: Int, length: Int) {
             
             var currentMaxResult = (x: 0, y: 0, length: 0)
             var currentMax = Int.min
             
-            for y in 1...300 {
-                for x in 1...300 {
-                    let lengthsRange = 1...min(301-x, 301-y)
-                    if (!lengthsRange.overlaps(lengths)) {
-                        continue
+            let max = 301 - (length ?? 1)
+            for y in 1...max {
+                for x in 1...max {
+                    let range: ClosedRange<Int>
+                    if let length = length {
+                        range = length...length
+                    } else {
+                        range = 1...min(301-x, 301-y)
                     }
-                    var power = 0
-                    for length in lengthsRange.clamped(to: lengths) {
-                        power += outerSquareSum(of: length, at: (x: x, y: y))
+                    for length in range {
+                        let power = squareSum(of: length, at: (x: x, y: y))
                         if power > currentMax {
                             currentMax = power
                             currentMaxResult = (x: x, y: y, length: length)
@@ -59,16 +66,14 @@ class Day11: Day {
             return currentMaxResult
         }
         
-        func outerSquareSum(of length: Int, at coords: (x: Int, y: Int)) -> Int {
-            if length == 1 {
-                return powerLevel[Grid.index(x: coords.x, y: coords.y)]!
-            }
-            var power = powerLevel[Grid.index(x: coords.x + length - 1, y: coords.y + length - 1 )]!
-            for i in 0...length-2 {
-                power += powerLevel[Grid.index(x: coords.x + i, y: coords.y + length - 1)]!
-                power += powerLevel[Grid.index(x: coords.x + length - 1, y: coords.y + i)]!
-            }
-            return power
+        func squareSum(of length: Int, at coords: (x: Int, y: Int)) -> Int {
+            let start = (x: coords.x - 1, y: coords.y - 1)
+            let end = (x: coords.x + length - 1, y: coords.y + length - 1)
+            let topLeft = powerSummedAreaTable[Grid.index(x: start.x, y: start.y)] ?? 0
+            let topRight = powerSummedAreaTable[Grid.index(x: start.x, y: end.y)] ?? 0
+            let bottomLeft = powerSummedAreaTable[Grid.index(x: end.x, y: start.y)] ?? 0
+            let bottomRight = powerSummedAreaTable[Grid.index(x: end.x, y: end.y)] ?? 0
+            return topLeft + bottomRight - topRight - bottomLeft
         }
         
     }
@@ -77,12 +82,10 @@ class Day11: Day {
         let serialNumber = Int(input.components(separatedBy: .whitespacesAndNewlines).first!)!
         let grid = Grid(serialNumber: serialNumber)
         
-        let max3x3 = grid.calculateMax(lengths: 1...3)
+        let max3x3 = grid.calculateMax(length: 3)
         print("The 3x3 square with max power for Day 11-1 is \(max3x3.x),\(max3x3.y)")
         
-        // We can expect the max size to be within 1...25
-        // Based on the examples given
-        let maxAny = grid.calculateMax(lengths: 1...25)
+        let maxAny = grid.calculateMax()
         print("The square with max power for Day 11-2 is \(maxAny.x),\(maxAny.y),\(maxAny.length)")
     }
 }
