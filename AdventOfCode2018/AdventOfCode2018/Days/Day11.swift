@@ -39,33 +39,6 @@ class Day11: Day {
             self.powerSummedAreaTable = summedAreaTable
         }
         
-        func calculateMax(length: Int? = nil) -> (x: Int, y: Int, length: Int) {
-            
-            var currentMaxResult = (x: 0, y: 0, length: 0)
-            var currentMax = Int.min
-            
-            let max = 301 - (length ?? 1)
-            for y in 1...max {
-                for x in 1...max {
-                    let range: ClosedRange<Int>
-                    if let length = length {
-                        range = length...length
-                    } else {
-                        range = 1...min(301-x, 301-y)
-                    }
-                    for length in range {
-                        let power = squareSum(of: length, at: (x: x, y: y))
-                        if power > currentMax {
-                            currentMax = power
-                            currentMaxResult = (x: x, y: y, length: length)
-                        }
-                    }
-                }
-            }
-            
-            return currentMaxResult
-        }
-        
         func squareSum(of length: Int, at coords: (x: Int, y: Int)) -> Int {
             let start = (x: coords.x - 1, y: coords.y - 1)
             let end = (x: coords.x + length - 1, y: coords.y + length - 1)
@@ -82,10 +55,24 @@ class Day11: Day {
         let serialNumber = Int(input.components(separatedBy: .whitespacesAndNewlines).first!)!
         let grid = Grid(serialNumber: serialNumber)
         
-        let max3x3 = grid.calculateMax(length: 3)
-        print("The 3x3 square with max power for Day 11-1 is \(max3x3.x),\(max3x3.y)")
+        var currentMax = (x: 0, y: 0, length: 0, value: Int.min)
         
-        let maxAny = grid.calculateMax()
-        print("The square with max power for Day 11-2 is \(maxAny.x),\(maxAny.y),\(maxAny.length)")
+        for length in 1...300 {
+            let max = 301 - length
+            for y in 1...max {
+                for x in 1...max {
+                    let power = grid.squareSum(of: length, at: (x: x, y: y))
+                    if power > currentMax.value {
+                        currentMax = (x: x, y: y, length: length, value: power)
+                    }
+                }
+            }
+            
+            if length == 3 {
+                print("The 3x3 square with max power for Day 11-1 is \(currentMax.x),\(currentMax.y)")
+            }
+        }
+        
+        print("The square with max power for Day 11-2 is \(currentMax.x),\(currentMax.y),\(currentMax.length)")
     }
 }

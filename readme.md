@@ -30,7 +30,7 @@ Some attention will be ported to performance consideration, let try to make that
 | **8**  | 0.035s          | 38780    | 18232      |
 | **9**  | 3,930s          | 384205   | 3066307353 |
 | **10** | 0,104s          | AHFGRKEE | 10243      |
-| **11** | 2,023s          | 21,93    | 231,108,14 |
+| **11** | 1,879s          | 21,93    | 231,108,14 |
 | **12** | 0,029s          | 3337     | 4300000000349 |
 
 \* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013 in "Release" mode
