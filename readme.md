@@ -31,6 +31,6 @@ Some attention will be ported to performance consideration, let try to make that
 | **9**  | **14,565s**     | 384205   | 3066307353 |
 | **10** | 1,877s          | AHFGRKEE | 10243      |
 | **11** | 4,468s          | 21,93    | 231,108,14 |
-| **12** | TBA             | 3337     |            |
+| **12** | 0,036s          | 3337     | 4300000000349 |
 
 \* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013
