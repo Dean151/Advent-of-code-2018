@@ -205,22 +205,26 @@ class Day13: Day {
             return index(for: nextPosition(from: position(at: currentIndex), going: direction))
         }
         
-        func findFirstCollision() -> Position {
+        func findNextCollision() -> (position: Position, karts: [Kart]) {
             while true {
                 // Run each kart in the proper order :)
+                var collision: (position: Position, karts: [Kart])?
                 for (kart, currentIndex) in karts.sorted(by: { $0.value < $1.value }) {
                     let nextIndex = self.nextIndex(from: currentIndex, going: kart.direction)
                     
                     // Check the new index is not in conflict with another kart.
                     // If so, we've found our collision
-                    if karts.values.contains(nextIndex) {
-                        return self.position(at: nextIndex)
+                    if let secondKart = karts.filter({ $0.value == nextIndex }).first?.key {
+                        collision = (position: self.position(at: nextIndex), karts: [kart, secondKart])
                     }
                     
                     // If the new position is a curve or a intersection, the direction changes
                     // Move the kart at the new position
                     kart.updateDirection(following: sections[nextIndex]!)
                     self.karts[kart] = nextIndex
+                }
+                if let collision = collision {
+                    return collision
                 }
             }
         }
@@ -267,7 +271,25 @@ class Day13: Day {
     static func run(input: String) {
         let track = Track.parse(input: input)
         
-        let collision = track.findFirstCollision()
-        print("First collision for Day 13-1 occurred at \(collision.x),\(collision.y)")
+        var firstRemoved = false
+        while track.karts.count > 1 {
+            let collision = track.findNextCollision()
+            
+            if !firstRemoved {
+                print("First collision for Day 13-1 occurred at \(collision.position.x),\(collision.position.y)")
+                firstRemoved = true
+            }
+            
+            for kart in collision.karts {
+                track.karts.removeValue(forKey: kart)
+            }
+        }
+        
+        if let kart = track.karts.first {
+            let position = track.position(at: kart.value)
+            print("The only remaining kart for Day 13-2 is at \(position.x),\(position.y)")
+        } else {
+            fatalError("No remaining kart...")
+        }
     }
 }
