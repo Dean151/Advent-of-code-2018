@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		717AA0AD21C2613800C7820E /* Day13.swift in Sources */ = {isa = PBXBuildFile; fileRef = 717AA0AC21C2613800C7820E /* Day13.swift */; };
 		71BBC0D921BE5FDC00E41048 /* Day10.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BBC0D821BE5FDC00E41048 /* Day10.swift */; };
 		E91E39B621B8EDD80054F06D /* Day6.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E39B521B8EDD80054F06D /* Day6.swift */; };
 		E92AA7CD21B6635D0088E864 /* Day4.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92AA7CC21B6635D0088E864 /* Day4.swift */; };
@@ -38,6 +39,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		717AA0AB21C2605600C7820E /* day13.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day13.txt; sourceTree = "<group>"; };
+		717AA0AC21C2613800C7820E /* Day13.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day13.swift; sourceTree = "<group>"; };
 		71BBC0D721BE5FC600E41048 /* day10.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day10.txt; sourceTree = "<group>"; };
 		71BBC0D821BE5FDC00E41048 /* Day10.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day10.swift; sourceTree = "<group>"; };
 		71CAB80221B924050092E369 /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = readme.md; path = ../readme.md; sourceTree = "<group>"; };
@@ -97,6 +100,7 @@
 				71BBC0D821BE5FDC00E41048 /* Day10.swift */,
 				E9C51B2021BF862400C9DA11 /* Day11.swift */,
 				E96FA7A021C0E746000DBEAD /* Day12.swift */,
+				717AA0AC21C2613800C7820E /* Day13.swift */,
 			);
 			path = Days;
 			sourceTree = "<group>";
@@ -117,6 +121,7 @@
 				71BBC0D721BE5FC600E41048 /* day10.txt */,
 				E9C51B1F21BF860400C9DA11 /* day11.txt */,
 				E96FA7A221C0E757000DBEAD /* day12.txt */,
+				717AA0AB21C2605600C7820E /* day13.txt */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -211,6 +216,7 @@
 				E91E39B621B8EDD80054F06D /* Day6.swift in Sources */,
 				E9AD333621B507DD00EFD016 /* Day3.swift in Sources */,
 				E98B3C0421B730C40034058B /* shared.swift in Sources */,
+				717AA0AD21C2613800C7820E /* Day13.swift in Sources */,
 				E9F8A41721BA48C300D1B6E6 /* Day7.swift in Sources */,
 				E98B3C0021B72EFD0034058B /* Day2.swift in Sources */,
 				E96FA7A121C0E746000DBEAD /* Day12.swift in Sources */,
