@@ -12,9 +12,9 @@ class Day13: Day {
     
     typealias Position = (x: Int, y: Int)
     
-    class Track: CustomStringConvertible {
+    class Track {
         
-        enum Section: CustomStringConvertible {
+        enum Section {
             enum StraightType {
                 case horizontal, vertical
             }
@@ -23,27 +23,6 @@ class Day13: Day {
             }
             
             case straight(type: StraightType), curve(type: curveType), intersection
-            
-            var description: String {
-                switch self {
-                case .intersection:
-                    return "+"
-                case .straight(type: let type):
-                    switch type {
-                    case .horizontal:
-                        return "-"
-                    case .vertical:
-                        return "|"
-                    }
-                case .curve(type: let type):
-                    switch type {
-                    case .topLeft, .bottomRight:
-                        return "/"
-                    case .bottomLeft, .topRight:
-                        return "\\"
-                    }
-                }
-            }
             
             static func from(char: Character, previous: Character?) -> Section? {
                 switch char {
@@ -63,44 +42,134 @@ class Day13: Day {
             }
         }
         
-        class Kart {
+        enum Direction {
+            case up, right, down, left
+        }
+        
+        class Kart: Equatable, Hashable {
             
-            enum Direction {
-                case up, right, down, left
+            enum NextIntersectionType {
+                case left, straight, right
             }
             
-            var position: Position
+            let index: Int
             var direction: Direction
+            var nextIntersection = NextIntersectionType.left
             
-            var nextTurnIsLeft = true
-            
-            init(position: Position, direction: Direction) {
-                self.position = position
+            init(index: Int, direction: Direction) {
+                self.index = index
                 self.direction = direction
             }
             
-            static func from(char: Character, at position: Position) -> Kart? {
+            func updateDirection(following section: Section) {
+                switch section {
+                case .straight:
+                    break
+                case .curve(type: let type):
+                    switch type {
+                    case .topLeft:
+                        if direction == .up {
+                            turnRight()
+                        } else if direction == .left {
+                            turnLeft()
+                        } else {
+                            fatalError("Out of track")
+                        }
+                    case .topRight:
+                        if direction == .right {
+                            turnRight()
+                        } else if direction == .up {
+                            turnLeft()
+                        } else {
+                            fatalError("Out of track")
+                        }
+                    case .bottomLeft:
+                        if direction == .left {
+                            turnRight()
+                        } else if direction == .down {
+                            turnLeft()
+                        } else {
+                            fatalError("Out of track")
+                        }
+                    case .bottomRight:
+                        if direction == .down {
+                            turnRight()
+                        } else if direction == .right {
+                            turnLeft()
+                        } else {
+                            fatalError("Out of track")
+                        }
+                    }
+                case .intersection:
+                    switch nextIntersection {
+                    case .left:
+                        self.turnLeft()
+                        nextIntersection = .straight
+                    case .straight:
+                        nextIntersection = .right
+                    case .right:
+                        self.turnRight()
+                        nextIntersection = .left
+                    }
+                }
+            }
+            
+            func turnLeft() {
+                switch direction {
+                case .up:
+                    direction = .left
+                case .left:
+                    direction = .down
+                case .down:
+                    direction = .right
+                case .right:
+                    direction = .up
+                }
+            }
+            
+            func turnRight() {
+                switch direction {
+                case .up:
+                    direction = .right
+                case .right:
+                    direction = .down
+                case .down:
+                    direction = .left
+                case .left:
+                    direction = .up
+                }
+            }
+            
+            static func from(index: Int, char: Character) -> Kart? {
                 switch char {
                 case "^":
-                    return Kart(position: position, direction: .up)
+                    return Kart(index: index, direction: .up)
                 case ">":
-                    return Kart(position: position, direction: .right)
+                    return Kart(index: index, direction: .right)
                 case "v":
-                    return Kart(position: position, direction: .down)
+                    return Kart(index: index, direction: .down)
                 case "<":
-                    return Kart(position: position, direction: .left)
+                    return Kart(index: index, direction: .left)
                 default:
                     return nil
                 }
+            }
+            
+            var hashValue: Int {
+                return index
+            }
+            
+            static func == (lhs: Kart, rhs: Kart) -> Bool {
+                return lhs.index == rhs.index
             }
         }
         
         let width: Int
         let height: Int
         let sections: [Int: Section]
-        let karts: [Kart]
+        var karts: [Kart: Int]
         
-        init(width: Int, height: Int, sections: [Int: Section], karts: [Kart]) {
+        init(width: Int, height: Int, sections: [Int: Section], karts: [Kart: Int]) {
             self.width = width
             self.height = height
             self.sections = sections
@@ -115,16 +184,45 @@ class Day13: Day {
             return Track.index(for: pos, in: width)
         }
         
-        var description: String {
-            var string = ""
-            for y in 0..<height {
-                for x in 0..<width {
-                    let index = self.index(for: (x: x, y: y))
-                    string += self.sections[index]?.description ?? " "
-                }
-                string += "\n"
+        func position(at index: Int) -> Position {
+            return (x: index % width, y: (index - (index % width))/width)
+        }
+        
+        func nextPosition(from position: Position, going direction: Direction) -> Position {
+            switch direction {
+            case .up:
+                return (x: position.x, y: position.y - 1)
+            case .right:
+                return (x: position.x + 1, y: position.y)
+            case .down:
+                return (x: position.x, y: position.y + 1)
+            case .left:
+                return (x: position.x - 1, y: position.y)
             }
-            return string
+        }
+        
+        func nextIndex(from currentIndex: Int, going direction: Direction) -> Int {
+            return index(for: nextPosition(from: position(at: currentIndex), going: direction))
+        }
+        
+        func findFirstCollision() -> Position {
+            while true {
+                // Run each kart in the proper order :)
+                for (kart, currentIndex) in karts.sorted(by: { $0.value < $1.value }) {
+                    let nextIndex = self.nextIndex(from: currentIndex, going: kart.direction)
+                    
+                    // Check the new index is not in conflict with another kart.
+                    // If so, we've found our collision
+                    if karts.values.contains(nextIndex) {
+                        return self.position(at: nextIndex)
+                    }
+                    
+                    // If the new position is a curve or a intersection, the direction changes
+                    // Move the kart at the new position
+                    kart.updateDirection(following: sections[nextIndex]!)
+                    self.karts[kart] = nextIndex
+                }
+            }
         }
         
         static func parse(input: String) -> Track {
@@ -134,7 +232,7 @@ class Day13: Day {
             let height = lines.count, width = lines.max(by: { $0.count < $1.count })!.count
             
             var sections = [Int: Section](minimumCapacity: width*height)
-            var karts = [Kart]()
+            var karts = [Kart: Int]()
             
             // Now we parse each character.
             for (y,line) in lines.enumerated() {
@@ -144,16 +242,18 @@ class Day13: Day {
                         continue
                     }
                     
+                    let index = Track.index(for: (x: x, y: y), in: width)
+                    
                     // Is there a kart?
                     var c = c
-                    if let kart = Kart.from(char: c, at: (x: x, y: y)) {
-                        karts.append(kart)
+                    if let kart = Kart.from(index: index, char: c) {
+                        karts[kart] = index
                         c = [.up, .down].contains(kart.direction) ? "|" : "-"
                     }
                     
                     // Parse the section
                     if let section = Section.from(char: c, previous: previous) {
-                        sections[Track.index(for: (x: x, y: y), in: width)] = section
+                        sections[index] = section
                     }
                     
                     previous = c
@@ -166,6 +266,8 @@ class Day13: Day {
     
     static func run(input: String) {
         let track = Track.parse(input: input)
-        print(track)
+        
+        let collision = track.findFirstCollision()
+        print("First collision for Day 13-1 occurred at \(collision.x),\(collision.y)")
     }
 }
