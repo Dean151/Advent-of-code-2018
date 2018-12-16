@@ -89,50 +89,43 @@ class Day15: Day {
             
             var seen = Set<Int>()
             let index = self.index(for: initial)
-            var toVisit = [index: 0]
-            var data = [Int: (distance: Int, parent: Int)]()
-            while let (index, distance) = toVisit.popFirst() {
+            var toVisit: [Int: (Int, Int?)] = [index: (0, nil)]
+            var data = [Int: (distance: Int, firstMove: Int)]()
+            while let (index, element) = toVisit.popFirst() {
                 let neighbors = openedNeighbors(around: position(at: index))
                 for pos in neighbors {
                     let newIndex = self.index(for: pos)
-                    if (data[newIndex]?.distance ?? Int.max) > distance + 1 {
-                        data.updateValue((distance + 1, index), forKey: newIndex)
+                    if data[newIndex] == nil || data[newIndex]!.distance > element.0 + 1 {
+                        data.updateValue((element.0 + 1, element.1 ?? newIndex), forKey: newIndex)
                     }
-                    else if data[newIndex]?.distance == distance + 1 && data[newIndex]!.parent > index {
-                        data[newIndex]!.parent = index
+                    else if data[newIndex]!.distance == element.0 + 1 && data[newIndex]!.firstMove > (element.1 ?? newIndex) {
+                        data[newIndex]!.firstMove = element.1 ?? newIndex
                     }
                     if seen.contains(newIndex) || toVisit.contains(where: { $0.key == newIndex }) {
                         continue
                     }
                     if !toVisit.contains(where: { $0.key == newIndex }) {
-                        toVisit.updateValue(distance + 1, forKey: newIndex)
+                        toVisit.updateValue((element.0 + 1, element.1 ?? newIndex), forKey: newIndex)
                     }
                 }
                 seen.insert(index)
             }
             
-            let paths = data.filter({ return targets.contains($0.key) })
-            guard let closest = paths.sorted(by: {
+            let paths = data.filter({ return targets.contains($0.key) }).sorted(by: {
                 if $0.value.distance == $1.value.distance {
                     return $0.key < $1.key
                 }
                 return $0.value.distance < $1.value.distance
-            }).first else {
-                return nil
-            }
-            
-            var nextMove = closest
-            while nextMove.value.parent != index {
-                nextMove = (key: nextMove.value.parent, value: data[nextMove.value.parent]!)
-            }
-            
-            return nextMove.key
+            })
+            return paths.first?.value.firstMove
         }
         
         func performFight() -> Int {
             var roundsElapsed = 0
             while true {
+                print(self)
                 if performRound() {
+                    print(self)
                     break
                 } else {
                     roundsElapsed += 1
@@ -258,6 +251,7 @@ class Day15: Day {
         let cavern = Cavern.parse(from: input)
         let rounds = cavern.performFight()
         let healthRemaining = cavern.warriors.reduce(0, { $0 + $1.warrior.health })
+        print("Solved in \(rounds) rounds")
         print("Result for Day 15-1 is \(rounds * healthRemaining)")
     }
 }
