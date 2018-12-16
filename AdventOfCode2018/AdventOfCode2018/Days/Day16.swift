@@ -70,9 +70,10 @@ class Day16: Day {
     }
     
     static func run(input: String) {
-        let lines = input.components(separatedBy: .newlines)
+        let parts = input.components(separatedBy: "\n\n\n")
         
         var matchingOperations = [Int: Set<OpCode>]()
+        var solvedOperations = [Int: OpCode]()
         
         let beforeRegex = try! NSRegularExpression(pattern: "^Before: \\[(\\d+), (\\d+), (\\d+), (\\d+)\\]$", options: .caseInsensitive)
         var before = [Int]()
@@ -85,7 +86,7 @@ class Day16: Day {
         
         var moreThan3 = 0
         
-        for line in lines {
+        for line in parts.first!.components(separatedBy: .newlines) {
             if let match = beforeRegex.matches(in: line, options: [], range: NSRange(location: 0, length: line.count)).first {
                 before = [1, 2, 3, 4].map({ Int(match.group(at: $0, in: line))! })
             }
@@ -98,6 +99,8 @@ class Day16: Day {
                 after = [1, 2, 3, 4].map({ Int(match.group(at: $0, in: line))! })
                 let matching = OpCode.identifyOperation(before: before, operation: op, after: after)
                 moreThan3 += matching.count >= 3 ? 1 : 0
+                
+                // We intersect
                 if let otherMatch = matchingOperations[op[0]] {
                     matchingOperations.updateValue(matching.intersection(otherMatch), forKey: op[0])
                 } else {
@@ -107,5 +110,37 @@ class Day16: Day {
         }
         
         print("Number of matching with 3+ opcodes for Day 16-1 is \(moreThan3)")
+        
+        // remove each options that is already solved
+        while true {
+            let matchedOperations = matchingOperations.filter({ $0.value.count == 1 })
+            if matchingOperations.isEmpty {
+                break
+            }
+            for op in matchedOperations {
+                solvedOperations[op.key] = op.value.first!
+                matchingOperations.removeValue(forKey: op.key)
+                matchingOperations = matchingOperations.mapValues({ intersect -> Set<Day16.OpCode> in
+                    var matching = intersect
+                    matching.remove(op.value.first!)
+                    return matching
+                })
+            }
+        }
+        
+        if !matchingOperations.isEmpty {
+            fatalError("Not all was solved.")
+        }
+        
+        var register = [0,0,0,0]
+        for line in parts.last!.components(separatedBy: .newlines) {
+            guard let match = opRegex.matches(in: line, options: [], range: NSRange(location: 0, length: line.count)).first else {
+                continue
+            }
+            let op = [1, 2, 3, 4].map({ Int(match.group(at: $0, in: line))! })
+            register = solvedOperations[op[0]]!.perform(operation: op, with: register)
+        }
+        
+        print("Value in register 0 after operations for Day 16-2 is \(register[0])")
     }
 }
