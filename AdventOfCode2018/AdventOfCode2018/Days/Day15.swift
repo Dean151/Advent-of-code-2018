@@ -30,6 +30,10 @@ class Day15: Day {
             return uuid.hashValue
         }
         
+        func attack(other: Warrior) {
+            other.health -= self.attack
+        }
+        
         static func == (lhs: Warrior, rhs: Warrior) -> Bool {
             return lhs.uuid == rhs.uuid
         }
@@ -81,7 +85,17 @@ class Day15: Day {
             }
         }
         
-        func closest(_ targets: Set<Int>, from initial: Position) -> Int? {
+        func firstTargetToAttack(targets: [(warrior: Day15.Warrior, index: Int)], from pos: Position) -> Warrior? {
+            let neighbors = self.neighbors(around: pos).map { self.index(for: $0) }
+            return targets.filter({ neighbors.contains($0.index) }).min(by: {
+                if $0.warrior.health == $1.warrior.health {
+                    return $0.index < $1.index
+                }
+                return $0.warrior.health < $1.warrior.health
+            })?.warrior
+        }
+        
+        func firstMoveToClosest(_ targets: Set<Int>, from initial: Position) -> Int? {
             
             if targets.isEmpty {
                 return nil
@@ -155,14 +169,8 @@ class Day15: Day {
                 
                 // If we're already in range of a target, we hit!
                 let pos = self.position(at: index)
-                let neighbors = self.neighbors(around: pos).map { self.index(for: $0) }
-                if let target = targets.filter({ neighbors.contains($0.index) }).min(by: {
-                    if $0.warrior.health == $1.warrior.health {
-                        return $0.index < $1.index
-                    }
-                    return $0.warrior.health < $1.warrior.health
-                }) {
-                    target.warrior.health -= warrior.attack
+                if let target = firstTargetToAttack(targets: targets, from: pos) {
+                    warrior.attack(other: target)
                     continue
                 }
                 
@@ -179,16 +187,11 @@ class Day15: Day {
                 }
                 
                 // Find the closest place to go
-                if let index = closest(placesToGo, from: pos) {
+                if let index = firstMoveToClosest(placesToGo, from: pos) {
                     warriors[i].index = index
-                    let neighbors = self.neighbors(around: self.position(at: index)).map { self.index(for: $0) }
-                    if let target = targets.filter({ neighbors.contains($0.index) }).min(by: {
-                        if $0.warrior.health == $1.warrior.health {
-                            return $0.index < $1.index
-                        }
-                        return $0.warrior.health < $1.warrior.health
-                    }) {
-                        target.warrior.health -= warrior.attack
+                    
+                    if let target = firstTargetToAttack(targets: targets, from: self.position(at: index)) {
+                        warrior.attack(other: target)
                         continue
                     }
                 }
