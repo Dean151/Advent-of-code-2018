@@ -15,7 +15,7 @@ class Day17: Day {
     class Slice: CustomStringConvertible {
         
         enum Ground: CustomStringConvertible {
-            case sand, clay, watered, waterfalling, source
+            case sand, clay, watered, waterfalling
             
             var description: String {
                 switch self {
@@ -27,8 +27,6 @@ class Day17: Day {
                     return "~"
                 case .waterfalling:
                     return "|"
-                case .source:
-                    return "+"
                 }
             }
         }
@@ -69,12 +67,13 @@ class Day17: Day {
         }
         
         init(clays: [Int: [Int: Ground]]) {
+            let yMin = clays.keys.min()!
             let yMax = clays.keys.max()!
             let (xMin,xMax) = clays.reduce((Int.max, Int.min), { return (min($0.0, $1.value.keys.min()!), max($0.1, $1.value.keys.max()!)) })
             
-            self.offset = (x: xMin-1, y: 0)
+            self.offset = (x: xMin-1, y: yMin)
             self.width = xMax - xMin + 3
-            self.height = yMax + 1
+            self.height = yMax - yMin + 1
             self.ground = [Ground](repeating: .sand, count: width*height)
             
             for (y,subslice) in clays {
@@ -90,7 +89,6 @@ class Day17: Day {
             var ground = [Int: [Int: Ground]]()
             for line in lines {
                 guard let match = parseRegex.matches(in: line, options: [], range: NSRange(location: 0, length: line.count)).first else {
-                    print("Could not parse line \(line)")
                     continue
                 }
                 let a = match.group(at: 1, in: line)
@@ -126,12 +124,11 @@ class Day17: Day {
         
         var description: String {
             var string = ""
-            for y in 0..<height {
-                for x in offset.x..<width+offset.x {
-                    let index = self.index(at: (x: x, y: y))
-                    string += ground[index].description
+            for (index, g) in ground.enumerated() {
+                string += g.description
+                if index % width == width-1 {
+                    string += "\n"
                 }
-                string += "\n"
             }
             return string
         }
@@ -146,7 +143,9 @@ class Day17: Day {
                         currentFloodings.remove(current)
                     }
                     
-                    ground[current] = .waterfalling
+                    if current >= 0 {
+                        ground[current] = .waterfalling
+                    }
                     
                     let down = self.down(from: current)
                     if down >= (width*height) {
@@ -154,7 +153,7 @@ class Day17: Day {
                         continue
                     }
                     
-                    switch ground[down] {
+                    switch down >= 0 ? ground[down] : .sand {
                     case .sand:
                         currentFloodings.insert(down)
                     case .clay, .watered:
@@ -167,13 +166,9 @@ class Day17: Day {
                         }
                     case .waterfalling:
                         continue
-                    case .source:
-                        fatalError("Impossible Oo")
                     }
                 }
             }
-            
-            ground[index] = .source
         }
         
         func floodLine(from index: Int) -> [Int] {
@@ -220,6 +215,6 @@ class Day17: Day {
         let slice = Slice.from(lines: input.components(separatedBy: .newlines))
         slice.startFlooding(from: (x: 500, y: 0))
         print(slice)
-        print("Number of flooded tiles for Day 17-1 is \(slice.ground.filter({ [.watered, .waterfalling].contains($0) }).count)")
+        print("Number of flooded tiles for Day 17-1 is \(slice.ground.filter({ $0 == .watered || $0 == .waterfalling }).count)")
     }
 }
