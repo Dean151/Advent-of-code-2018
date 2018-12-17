@@ -19,7 +19,7 @@ class Day15: Day {
         
         let id: Int
         let type: Type
-        let attack = 3
+        var attack = 3
         var health = 200
         
         init(id: Int, type: Type) {
@@ -40,7 +40,7 @@ class Day15: Day {
         }
     }
     
-    class Cavern: CustomStringConvertible {
+    class Cavern {
         enum Square {
             case wall, open
         }
@@ -49,13 +49,13 @@ class Day15: Day {
         let height: Int
         
         let squares: [Square]
-        var warriors: [(warrior: Warrior, index: Int)]
+        var initialWarriors: [(warrior: Warrior, index: Int)]
         
         init(width: Int, height: Int, squares: [Square], warriors: [(warrior: Warrior, index: Int)]) {
             self.width = width
             self.height = height
             self.squares = squares
-            self.warriors = warriors
+            self.initialWarriors = warriors
         }
         
         static func index(for pos: Position, in width: Int) -> Int {
@@ -79,7 +79,7 @@ class Day15: Day {
             ]
         }
         
-        func openedNeighbors(around pos: Position) -> [Position] {
+        func openedNeighbors(around pos: Position, warriors: [(warrior: Warrior, index: Int)]) -> [Position] {
             return neighbors(around: pos).filter {
                 let index = self.index(for: $0)
                 return squares[index] == .open && !warriors.contains(where: { $0.index == index && $0.warrior.health > 0 })
@@ -96,14 +96,14 @@ class Day15: Day {
             })?.warrior
         }
         
-        func firstMoveToClosest(_ targets: Set<Int>, from initial: Position) -> Int? {
+        func firstMoveToClosest(_ targets: Set<Int>, from initial: Position, warriors: [(warrior: Warrior, index: Int)]) -> Int? {
             if targets.isEmpty {
                 return nil
             }
             
             var toVisit = [Int: (distance: Int, firstMove: Int)]()
             var visited = [Int: (distance: Int, firstMove: Int)]()
-            for move in openedNeighbors(around: initial) {
+            for move in openedNeighbors(around: initial, warriors: warriors) {
                 let index = self.index(for: move)
                 toVisit[index] = (distance: 1, firstMove: index)
             }
@@ -122,7 +122,7 @@ class Day15: Day {
                 }
                 
                 currentDistance = move.distance
-                for newMove in openedNeighbors(around: self.position(at: index)) {
+                for newMove in openedNeighbors(around: self.position(at: index), warriors: warriors) {
                     let newIndex = self.index(for: newMove)
                     if toVisit[newIndex] == nil && visited[newIndex] == nil {
                         toVisit[newIndex] = (distance: move.distance + 1, firstMove: move.firstMove)
@@ -141,19 +141,29 @@ class Day15: Day {
             return nil
         }
         
-        func performFight() -> Int {
+        func performFight(elfesAttack: Int = 3) -> (outcome: Int, elfesWonWithNoLoss: Bool) {
+            var warriors = initialWarriors
+            
+            // Initialize warriors
+            warriors.forEach({ (warrior, _) in
+                warrior.health = 200
+                warrior.attack = warrior.type == .elf ? elfesAttack : 3
+            })
+            
             var roundsElapsed = 0
             while true {
-                if performRound() {
+                if performRound(warriors: &warriors) {
                     break
                 } else {
                     roundsElapsed += 1
                 }
             }
-            return roundsElapsed
+            let outcome = roundsElapsed * warriors.reduce(0, { $0 + $1.warrior.health })
+            let elfesWon = warriors.first!.warrior.type == .elf
+            return (outcome, elfesWon && warriors.count == initialWarriors.filter({ $0.warrior.type == .elf }).count)
         }
         
-        func performRound() -> Bool {
+        func performRound(warriors: inout [(warrior: Warrior, index: Int)]) -> Bool {
             
             defer {
                 // Remove the deaths
@@ -182,7 +192,7 @@ class Day15: Day {
                 // Get the places where we would be in range of someone
                 let placesToGo = targets.reduce(into: Set<Int>(), { result, value in
                     let pos = self.position(at: value.index)
-                    for neighbor in self.openedNeighbors(around: pos) {
+                    for neighbor in self.openedNeighbors(around: pos, warriors: warriors) {
                         result.insert(self.index(for: neighbor))
                     }
                 })
@@ -192,7 +202,7 @@ class Day15: Day {
                 }
                 
                 // Find the closest place to go
-                if let index = firstMoveToClosest(placesToGo, from: pos) {
+                if let index = firstMoveToClosest(placesToGo, from: pos, warriors: warriors) {
                     warriors[i].index = index
                     
                     if let target = firstTargetToAttack(targets: targets, from: self.position(at: index)) {
@@ -204,25 +214,6 @@ class Day15: Day {
             
             // Not finished yet!
             return false
-        }
-        
-        var description: String {
-            var string = ""
-            for y in 0..<height {
-                var warriorsString = ""
-                for x in 0..<width {
-                    let index = self.index(for: (x: x, y: y))
-                    if let warrior = warriors.first(where: { $0.index == index })?.warrior {
-                        string += warrior.type == .elf ? "E" : "G"
-                        warriorsString += " " + (warrior.type == .elf ? "E" : "G") + "(\(warrior.health))"
-                    } else {
-                        string += squares[index] == .open ? "." : "#"
-                    }
-                }
-                string += warriorsString
-                string += "\n"
-            }
-            return string
         }
         
         static func parse(from input: String) -> Cavern {
@@ -257,8 +248,17 @@ class Day15: Day {
     
     static func run(input: String) {
         let cavern = Cavern.parse(from: input)
-        let rounds = cavern.performFight()
-        let healthRemaining = cavern.warriors.reduce(0, { $0 + $1.warrior.health })
-        print("Result for Day 15-1 is \(rounds * healthRemaining)")
+        let results = cavern.performFight()
+        print("Battle outcome for Day 15-1 is \(results.outcome)")
+        
+        var attack = 4
+        while true {
+            let results = cavern.performFight(elfesAttack: attack)
+            if results.elfesWonWithNoLoss {
+                print("Winning elves battle outcome for Day 15-2 is \(results.outcome)")
+                break
+            }
+            attack += 1
+        }
     }
 }
