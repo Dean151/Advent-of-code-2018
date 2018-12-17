@@ -214,7 +214,7 @@ class Day17: Day {
     static func run(input: String) {
         let slice = Slice.from(lines: input.components(separatedBy: .newlines))
         slice.startFlooding(from: (x: 500, y: 0))
-        print(slice)
         print("Number of flooded tiles for Day 17-1 is \(slice.ground.filter({ $0 == .watered || $0 == .waterfalling }).count)")
+        print("Number of remaining water staying after source dried for Day 17-2 is \(slice.ground.filter({ $0 == .watered }).count)")
     }
 }
