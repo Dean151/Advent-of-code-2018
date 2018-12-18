@@ -24,4 +24,5 @@ import Foundation
 //Day14.solve()
 //Day15.solve()
 //Day16.solve()
-Day17.solve()
+//Day17.solve()
+Day18.solve()
