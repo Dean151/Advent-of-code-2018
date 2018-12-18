@@ -15,8 +15,7 @@ class Day17: Day {
     class Slice: CustomStringConvertible {
         
         enum Ground: CustomStringConvertible {
-            case sand, clay
-            case waterfall, restingwater
+            case sand, clay, watered, waterfalling
             
             var description: String {
                 switch self {
@@ -24,10 +23,10 @@ class Day17: Day {
                     return "."
                 case .clay:
                     return "#"
-                case .waterfall:
-                    return "|"
-                case .restingwater:
+                case .watered:
                     return "~"
+                case .waterfalling:
+                    return "|"
                 }
             }
         }
@@ -35,7 +34,7 @@ class Day17: Day {
         let offset: Position
         let height: Int
         let width: Int
-        var groundSlices: [Ground]
+        var ground: [Ground]
         
         static func index(at pos: (x: Int, y: Int), width: Int, offset: Position) -> Int {
             return (pos.y - offset.y) * width + (pos.x - offset.x)
@@ -51,31 +50,45 @@ class Day17: Day {
             return (x: x, y: y)
         }
         
+        func up(from index: Int) -> Int {
+            return index - width
+        }
+        
+        func left(from index: Int) -> Int {
+            return index - 1
+        }
+        
+        func right(from index: Int) -> Int {
+            return index + 1
+        }
+        
+        func down(from index: Int) -> Int {
+            return index + width
+        }
+        
         init(clays: [Int: [Int: Ground]]) {
+            let yMin = clays.keys.min()!
             let yMax = clays.keys.max()!
             let (xMin,xMax) = clays.reduce((Int.max, Int.min), { return (min($0.0, $1.value.keys.min()!), max($0.1, $1.value.keys.max()!)) })
             
-            self.offset = (x: xMin-1, y: 0)
+            self.offset = (x: xMin-1, y: yMin)
             self.width = xMax - xMin + 3
-            self.height = yMax + 1
-            self.groundSlices = [Ground](repeating: .sand, count: width*height)
+            self.height = yMax - yMin + 1
+            self.ground = [Ground](repeating: .sand, count: width*height)
             
             for (y,subslice) in clays {
                 for (x,ground) in subslice {
-                    groundSlices[index(at: (x: x, y: y))] = ground
+                    self.ground[index(at: (x: x, y: y))] = ground
                 }
             }
-            
-            groundSlices[index(at: (x: 500, y: 0))] = .waterfall
         }
         
         static func from(lines: [String]) -> Slice {
             let parseRegex = try! NSRegularExpression(pattern: "^(x|y)=(\\d+), (x|y)=(\\d+)\\.\\.(\\d+)$", options:  .caseInsensitive)
             
-            var slices = [Int: [Int: Ground]]()
+            var ground = [Int: [Int: Ground]]()
             for line in lines {
                 guard let match = parseRegex.matches(in: line, options: [], range: NSRange(location: 0, length: line.count)).first else {
-                    print("Could not parse line \(line)")
                     continue
                 }
                 let a = match.group(at: 1, in: line)
@@ -91,38 +104,117 @@ class Day17: Day {
                 
                 for i in d...e {
                     if a == "x" {
-                        if slices[i] == nil {
-                            slices[i] = [b: .clay]
+                        if ground[i] == nil {
+                            ground[i] = [b: .clay]
                         } else {
-                            slices[i]![b] = .clay
+                            ground[i]![b] = .clay
                         }
                     } else {
-                        if slices[b] == nil {
-                            slices[b] = [i: .clay]
+                        if ground[b] == nil {
+                            ground[b] = [i: .clay]
                         } else {
-                            slices[b]![i] = .clay
+                            ground[b]![i] = .clay
                         }
                     }
                 }
             }
             
-            return Slice(clays: slices)
+            return Slice(clays: ground)
         }
         
         var description: String {
             var string = ""
-            for y in 0..<height {
-                for x in offset.x..<width+offset.x {
-                    string += groundSlices[index(at: (x: x, y: y))].description
+            for (index, g) in ground.enumerated() {
+                string += g.description
+                if index % width == width-1 {
+                    string += "\n"
                 }
-                string += "\n"
             }
             return string
+        }
+        
+        func startFlooding(from pos: Position) {
+            let index = self.index(at: pos)
+            var currentFloodings = Set<Int>([index])
+            
+            while !currentFloodings.isEmpty {
+                for current in currentFloodings {
+                    defer {
+                        currentFloodings.remove(current)
+                    }
+                    
+                    if current >= 0 {
+                        ground[current] = .waterfalling
+                    }
+                    
+                    let down = self.down(from: current)
+                    if down >= (width*height) {
+                        // Out of bounds!
+                        continue
+                    }
+                    
+                    switch down >= 0 ? ground[down] : .sand {
+                    case .sand:
+                        currentFloodings.insert(down)
+                    case .clay, .watered:
+                        let flooding = floodLine(from: current)
+                        if flooding.count > 0 {
+                            currentFloodings.formUnion(flooding)
+                        } else {
+                            // Go back up to fill stuff
+                            currentFloodings.insert(up(from: current))
+                        }
+                    case .waterfalling:
+                        continue
+                    }
+                }
+            }
+        }
+        
+        func floodLine(from index: Int) -> [Int] {
+            var flooding: [Int] = []
+            
+            ground[index] = .waterfalling
+            
+            // First flood left
+            var left = self.left(from: index)
+            while ground[left] != .clay {
+                ground[left] = .waterfalling
+                let down = self.down(from: left)
+                if ground[down] == .sand {
+                    flooding.append(left)
+                    break
+                }
+                left = self.left(from: left)
+            }
+            
+            // Then right
+            var right = self.right(from: index)
+            while ground[right] != .clay {
+                ground[right] = .waterfalling
+                let down = self.down(from: right)
+                if ground[down] == .sand {
+                    flooding.append(right)
+                    break
+                }
+                right = self.right(from: right)
+            }
+            
+            if flooding.isEmpty {
+                // It's watered
+                for i in left+1...right-1 {
+                    ground[i] = .watered
+                }
+            }
+            
+            return flooding
         }
     }
     
     static func run(input: String) {
         let slice = Slice.from(lines: input.components(separatedBy: .newlines))
-        print(slice)
+        slice.startFlooding(from: (x: 500, y: 0))
+        print("Number of flooded tiles for Day 17-1 is \(slice.ground.filter({ $0 == .watered || $0 == .waterfalling }).count)")
+        print("Number of remaining water staying after source dried for Day 17-2 is \(slice.ground.filter({ $0 == .watered }).count)")
     }
 }
