@@ -32,6 +32,9 @@ class Day18: Day {
         let height: Int
         var field: [Acre]
         
+        var states = [Int: Int]()
+        var numberRunned = 0
+        
         init(width: Int, height: Int, field: [Acre]) {
             self.width = width
             self.height = height
@@ -104,12 +107,20 @@ class Day18: Day {
                     field[i] = new
                 }
             }
+            numberRunned += 1
         }
         
-        func run(n: Int) {
-            for _ in 0..<n {
+        func run(to n: Int) {
+            var runLeft = n - numberRunned
+            while runLeft > 0 {
                 runOnce()
-                print(self)
+                if let nb = states[hashValue] {
+                    let cycle = numberRunned - nb
+                    runLeft %= cycle
+                } else {
+                    states[hashValue] = numberRunned
+                }
+                runLeft -= 1
             }
         }
         
@@ -117,6 +128,10 @@ class Day18: Day {
             let nbWooded = field.filter({ $0 == .wooded }).count
             let nbLumberyard = field.filter({ $0 == .lumberyard }).count
             return nbLumberyard * nbWooded
+        }
+        
+        var hashValue: Int {
+            return field.hashValue
         }
         
         static func from(lines: [String]) -> Field {
@@ -153,10 +168,9 @@ class Day18: Day {
     
     static func run(input: String) {
         let field = Field.from(lines: input.components(separatedBy: .newlines).filter({ !$0.isEmpty }))
-        print(self)
-        field.run(n: 10)
+        field.run(to: 10)
         print("Solution for Day 18-1 is \(field.checksum)")
-        field.run(n: 1000000000 - 10)
+        field.run(to: 1000000000)
         print("Solution for Day 18-2 is \(field.checksum)")
     }
 }
