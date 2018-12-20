@@ -18,7 +18,7 @@ class Day20: Day {
         }
     }
     
-    class Facility: CustomStringConvertible {
+    class Facility {
         
         var squares = [Int: [Int: Square]]()
         
@@ -75,6 +75,7 @@ class Day20: Day {
         func follow(regex: String, initial pos: Position) {
             var regex = regex
             var pos = pos
+            var stackedPos = [Position]()
             while regex.count > 0 {
                 let c = regex.removeFirst()
                 if c == "^" {
@@ -84,40 +85,15 @@ class Day20: Day {
                 } else if let direction = Direction(rawValue: c) {
                     goThrewDoor(from: &pos, direction: direction)
                 } else if c == "(" {
-                    // Find the matching closing )
-                    let index = findClosingParenthesis(regex: &regex)
-                    let subRegexes = regex[..<index].components(separatedBy: "|").map({ $0.replacingOccurrences(of: "-", with: "|") })
-                    
-                    regex.removeSubrange(...index)
-                    // Use that to handle every subcases
-                    // Until we have ended our problem
-                    subRegexes.forEach {
-                        follow(regex: $0 + regex, initial: pos)
-                    }
-                    break
+                    stackedPos.append(pos)
+                } else if c == "|" {
+                    pos = stackedPos.last!
+                } else if c == ")" {
+                    stackedPos.removeLast()
                 } else {
                     fatalError("Case not handled")
                 }
             }
-        }
-        
-        func findClosingParenthesis(regex: inout String) -> String.Index {
-            var increment = 0
-            for (i,c) in regex.enumerated() {
-                if c == ")" {
-                    if increment == 0 {
-                        return regex.index(regex.startIndex, offsetBy: i)
-                    } else {
-                        increment -= 1
-                    }
-                } else if c == "|" && increment > 0 {
-                    let index = regex.index(regex.startIndex, offsetBy: i)
-                    regex = regex.replacingCharacters(in: index...index, with: "-")
-                } else if c == "(" {
-                    increment += 1
-                }
-            }
-            fatalError("Closing parenthesis not found")
         }
         
         func goThrewDoor(from pos: inout Position, direction: Direction) {
@@ -147,18 +123,6 @@ class Day20: Day {
             }
         }
         
-        var description: String {
-            var string = ""
-            for y in yMin-1...yMax+1 {
-                for x in xMin-1...xMax+1 {
-                    let pos = Position(x: x, y: y)
-                    string += self.rooms[pos]?.description ?? self[pos].rawValue
-                }
-                string += "\n"
-            }
-            return string
-        }
-        
         var fartest: Int {
             return rooms.values.max() ?? 0
         }
@@ -174,5 +138,6 @@ class Day20: Day {
         assert(Facility(regex: "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$").fartest == 31)
         
         print("Max number of doors we can pass threw for Day 20-1 is \(Facility(regex: regex).fartest)")
+        print("Number of rooms after 1000 doors at least for Day 20-2 is \(Facility(regex: regex).rooms.filter({ $0.value >= 1000 }).count)")
     }
 }
