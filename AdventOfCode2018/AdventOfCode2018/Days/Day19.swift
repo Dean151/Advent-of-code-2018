@@ -73,27 +73,39 @@ class Day19: Day {
         return (ip: ip, operations: operations)
     }
     
-    static func register(program: (ip: Int, operations: [Operation]), from registry: [Int]) -> [Int] {
+    static func register(program: (ip: Int, operations: [Operation]), from registry: [Int]) -> Int {
         let (ip, operations) = program
         
         var registry = registry
         var current = registry[ip]
         while current >= 0 && current < operations.count {
             registry[ip] = current
+            if current == 1 {
+                // Recap the calculation to be fasters since there are two loops of n * (n-1) iteration with n = registry[2]
+                // Part 1 : n = 954 ; Part 2 : n = 10551354
+                let n = registry[2]
+                
+                // Reverse engineering the operations
+                // 2 -> 15 -> 2 iterates n times
+                // Inside, 3 -> 11 -> 3 iterates n-1 times (so n * (n-1)
+                // For i,j in (0...n, 0...n-1)
+                // It perform the sum of the dividers of n (found out by analysing operations in the register.
+                return [Int](1...n).filter({ return n % $0 == 0 }).reduce(0, +)
+            }
             let operation = operations[current]
             registry = operation.code.perform(operation: [0, operation.a, operation.b, operation.c], with: registry)
             current = registry[ip] + 1
         }
-        return registry
+        return registry[0]
     }
     
     static func run(input: String) {
         let (ip, operations) = parse(lines: input.components(separatedBy: .newlines).filter({ !$0.isEmpty }))
         
         let registry1 = register(program: (ip: ip, operations: operations), from: [0, 0, 0, 0, 0, 0])
-        print("The value left in registry[0] for Day 19-1 is \(registry1[0])")
+        print("The value left in registry[0] for Day 19-1 is \(registry1)")
         
         let registry2 = register(program: (ip: ip, operations: operations), from: [1, 0, 0, 0, 0, 0])
-        print("The value left in registry[0] for Day 19-1 is \(registry2[0])")
+        print("The value left in registry[0] for Day 19-1 is \(registry2)")
     }
 }
