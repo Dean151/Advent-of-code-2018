@@ -10,41 +10,30 @@ import Foundation
 
 class Day20: Day {
     
-    static func furtestPath(for regex: String) -> String {
-        var regex = regex
-        var path = ""
-        while regex.count > 0 {
-            let c = regex.removeLast()
-            if c == "^" {
-                break
-            } else if c == "$" {
-                continue
-            } else if c == "(" {
-                // Get the substring and pass it threw furtestPath
-                guard let i = regex.lastIndex(of: "(") else {
-                    fatalError("Oups, ( parsing error")
-                }
-                let subregex = regex[i...].dropFirst()
-                regex.removeLast(subregex.count + 1)
-            } else if c == "(" {
-                // Should not occurs if precedent block works as intended
-                fatalError("Oups, ( parsing error")
-            } else {
-                path.append(c)
+    static func fartestPath(for regex: String) -> String {
+        var regex = regex.trimmingCharacters(in: CharacterSet(charactersIn: "^$"))
+        while let end = regex.firstIndex(of: ")") {
+            // Find the corresponding opening (
+            guard let start = regex[...end].lastIndex(of: "(") else {
+                fatalError("Closing ) does not have it's (")
             }
+            let subregex = regex[regex.index(after: start)...regex.index(before: end)]
+            regex.replaceSubrange((start...end).relative(to: regex), with: fartestPath(for: String(subregex)))
         }
-        return String(path.reversed())
+        let fartest = regex.components(separatedBy: "|").max(by: { $0.count < $1.count })!
+        print(fartest)
+        return fartest
     }
     
     static func run(input: String) {
         let regex = input.components(separatedBy: .newlines).first!
         
-        assert(furtestPath(for: "^WNE$").count == 3)
-        assert(furtestPath(for: "^ENWWW(NEEE|SSE(EE|N))$").count == 10)
-        assert(furtestPath(for: "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$").count == 18)
-        assert(furtestPath(for: "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$").count == 23)
-        assert(furtestPath(for: "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$").count == 31)
+        assert(fartestPath(for: "^WNE$").count == 3)
+        assert(fartestPath(for: "^ENWWW(NEEE|SSE(EE|N))$").count == 10)
+        assert(fartestPath(for: "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$").count == 18)
+        assert(fartestPath(for: "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$").count == 23)
+        assert(fartestPath(for: "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$").count == 31)
         
-        print("Max number of doors we can pass threw for Day 20-1 is \(furtestPath(for: regex).count)")
+        print("Max number of doors we can pass threw for Day 20-1 is \(fartestPath(for: regex).count)")
     }
 }
