@@ -70,14 +70,11 @@ class Day20: Day {
             for _ in 1...2 {
                 follow(regex: regex, initial: Position(x: 0, y: 0))
             }
-            
-            print(self)
         }
         
         func follow(regex: String, initial pos: Position) {
             var regex = regex
             var pos = pos
-            print(regex)
             while regex.count > 0 {
                 let c = regex.removeFirst()
                 if c == "^" {
@@ -88,16 +85,8 @@ class Day20: Day {
                     goThrewDoor(from: &pos, direction: direction)
                 } else if c == "(" {
                     // Find the matching closing )
-                    let index = findClosingParenthesis(regex: regex)
-                    let subRegexes = regex[..<index].components(separatedBy: "|").reduce(into: [String]()) { (result, element) in
-                        if let _ = element.firstIndex(of: ")") {
-                            let before = result.removeLast()
-                            result.append(before + "|" + element)
-                        } else {
-                            print(element)
-                            result.append(element)
-                        }
-                    }
+                    let index = findClosingParenthesis(regex: &regex)
+                    let subRegexes = regex[..<index].components(separatedBy: "|").map({ $0.replacingOccurrences(of: "-", with: "|") })
                     
                     regex.removeSubrange(...index)
                     // Use that to handle every subcases
@@ -112,7 +101,7 @@ class Day20: Day {
             }
         }
         
-        func findClosingParenthesis(regex: String) -> String.Index {
+        func findClosingParenthesis(regex: inout String) -> String.Index {
             var increment = 0
             for (i,c) in regex.enumerated() {
                 if c == ")" {
@@ -121,8 +110,10 @@ class Day20: Day {
                     } else {
                         increment -= 1
                     }
-                }
-                if c == "(" {
+                } else if c == "|" && increment > 0 {
+                    let index = regex.index(regex.startIndex, offsetBy: i)
+                    regex = regex.replacingCharacters(in: index...index, with: "-")
+                } else if c == "(" {
                     increment += 1
                 }
             }
