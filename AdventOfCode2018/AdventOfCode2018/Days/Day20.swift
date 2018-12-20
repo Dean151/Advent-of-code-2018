@@ -43,7 +43,7 @@ class Day20: Day {
             case wall = "#"
         }
         
-        enum Direction: String {
+        enum Direction: Character {
             case north = "N", west = "W", east = "E", south = "S"
         }
         
@@ -68,13 +68,65 @@ class Day20: Day {
             
             // We parse it twice to update distances with the minimum possible :)
             for _ in 1...2 {
-                var pos = Position(x: 0, y: 0)
-                goThrewDoor(from: &pos, direction: .west)
-                goThrewDoor(from: &pos, direction: .north)
-                goThrewDoor(from: &pos, direction: .east)
+                follow(regex: regex, initial: Position(x: 0, y: 0))
             }
             
             print(self)
+        }
+        
+        func follow(regex: String, initial pos: Position) {
+            var regex = regex
+            var pos = pos
+            print(regex)
+            while regex.count > 0 {
+                let c = regex.removeFirst()
+                if c == "^" {
+                    continue
+                } else if c == "$" {
+                    break
+                } else if let direction = Direction(rawValue: c) {
+                    goThrewDoor(from: &pos, direction: direction)
+                } else if c == "(" {
+                    // Find the matching closing )
+                    let index = findClosingParenthesis(regex: regex)
+                    let subRegexes = regex[..<index].components(separatedBy: "|").reduce(into: [String]()) { (result, element) in
+                        if let _ = element.firstIndex(of: ")") {
+                            let before = result.removeLast()
+                            result.append(before + "|" + element)
+                        } else {
+                            print(element)
+                            result.append(element)
+                        }
+                    }
+                    
+                    regex.removeSubrange(...index)
+                    // Use that to handle every subcases
+                    // Until we have ended our problem
+                    subRegexes.forEach {
+                        follow(regex: $0 + regex, initial: pos)
+                    }
+                    break
+                } else {
+                    fatalError("Case not handled")
+                }
+            }
+        }
+        
+        func findClosingParenthesis(regex: String) -> String.Index {
+            var increment = 0
+            for (i,c) in regex.enumerated() {
+                if c == ")" {
+                    if increment == 0 {
+                        return regex.index(regex.startIndex, offsetBy: i)
+                    } else {
+                        increment -= 1
+                    }
+                }
+                if c == "(" {
+                    increment += 1
+                }
+            }
+            fatalError("Closing parenthesis not found")
         }
         
         func goThrewDoor(from pos: inout Position, direction: Direction) {
@@ -126,10 +178,10 @@ class Day20: Day {
         
         assert(Facility(regex: "^WNE$").fartest == 3)
         assert(Facility(regex: "^ENWWW(NEEE|SSE(EE|N))$").fartest == 10)
-        //assert(Facility(regex: "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$").fartest == 18)
-        //assert(Facility(regex: "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$").fartest == 23)
-        //assert(Facility(regex: "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$").fartest == 31)
+        assert(Facility(regex: "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$").fartest == 18)
+        assert(Facility(regex: "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$").fartest == 23)
+        assert(Facility(regex: "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$").fartest == 31)
         
-        //print("Max number of doors we can pass threw for Day 20-1 is \(Facility(regex: regex).fartest)")
+        print("Max number of doors we can pass threw for Day 20-1 is \(Facility(regex: regex).fartest)")
     }
 }
