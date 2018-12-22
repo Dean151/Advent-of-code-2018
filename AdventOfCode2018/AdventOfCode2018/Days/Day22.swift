@@ -31,24 +31,28 @@ class Day22: Day {
         
         let width: Int
         let height: Int
-        let erosions: [Int: Int]
+        let target: Position
         let regions: [Int: Region]
         
-        static func index(at pos: (x: Int, y: Int), width: Int) -> Int {
+        static func index(at pos: Position, width: Int) -> Int {
             return pos.y * width + pos.x
         }
         
+        func index(at pos: Position) -> Int {
+            return Cavern.index(at: pos, width: width)
+        }
+        
         init(target: Position, depth: Int) {
-            self.width = target.x + 1
-            self.height = target.y + 1
+            let width = target.x + 10
+            let height = target.y + 10
             
-            let capacity = (target.x + 1) * (target.y + 1)
+            let capacity = width * height
             var erosions = [Int: Int](minimumCapacity: capacity)
             var regions = [Int: Region](minimumCapacity: capacity)
             
             for y in 0...target.y {
                 for x in 0...target.x {
-                    let index = Cavern.index(at: (x: x, y: y), width: target.x + 1)
+                    let index = Cavern.index(at: (x: x, y: y), width: width)
                     let geoIndex: Int
                     if (x == 0 && y == 0) || (x == target.x && y == target.y) {
                         geoIndex = 0
@@ -57,7 +61,7 @@ class Day22: Day {
                     } else if x == 0 {
                         geoIndex = 48271 * y
                     } else {
-                        geoIndex = erosions[index - (target.x + 1)]! * erosions[index - 1]!
+                        geoIndex = erosions[index - width]! * erosions[index - 1]!
                     }
                     let erosion = (geoIndex + depth) % 20183
                     erosions[index] = erosion
@@ -65,12 +69,14 @@ class Day22: Day {
                 }
             }
             
-            self.erosions = erosions
+            self.width = width
+            self.height = height
+            self.target = target
             self.regions = regions
         }
         
         var riskLevel: Int {
-            return regions.reduce(0, { $0 + $1.value.rawValue })
+            return regions.reduce(0, { $0 + ($1.key <= index(at: target) ? $1.value.rawValue : 0) })
         }
     }
     
@@ -81,6 +87,7 @@ class Day22: Day {
         let coords = components.last!.components(separatedBy: ",").compactMap({ Int($0) })
         let target = (x: coords.first!, y: coords.last!)
         
+        assert(Cavern(target: (x: 10, y: 10), depth: 510).riskLevel == 114)
         let cavern = Cavern(target: target, depth: depth)
         print("Risk level of the cavern for Day 21-1 is \(cavern.riskLevel)")
     }
