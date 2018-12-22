@@ -62,8 +62,8 @@ class Day22: Day {
         }
         
         init(target: Position, depth: Int) {
-            let width = target.x * 5
-            let height = target.y + 50
+            let width = target.x * 10
+            let height = target.y * 2
             
             let capacity = width * height
             var erosions = [Int: Int](minimumCapacity: capacity)
@@ -105,19 +105,12 @@ class Day22: Day {
         func neighbors(from node: Node) -> [(node: Node, upcost: Int)] {
             
             let pos = position(at: node.index)
-            if pos.x == width - 1 {
-                fatalError("Edge is too close...")
-            }
-            if pos.y == height - 1 {
-                fatalError("We need to go deeper...")
-            }
-            
             let indexes = [
                 (x: pos.x, y: pos.y - 1),
                 (x: pos.x - 1, y: pos.y),
                 (x: pos.x + 1, y: pos.y),
                 (x: pos.x, y: pos.y + 1),
-            ].filter({ $0.x >= 0 && $0.y >= 0 }).map({ index(at: $0) })
+            ].filter({ $0.x >= 0 && $0.y >= 0 && $0.x < width && $0.y < height }).map({ index(at: $0) })
             
             var neighbors = [(node: Node, upcost: Int)]()
             
