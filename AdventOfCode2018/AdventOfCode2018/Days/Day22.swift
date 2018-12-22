@@ -78,6 +78,11 @@ class Day22: Day {
         var riskLevel: Int {
             return regions.reduce(0, { $0 + ($1.key <= index(at: target) ? $1.value.rawValue : 0) })
         }
+        
+        var minimumReachTime: Int {
+            // TODO!
+            return 0
+        }
     }
     
     static func run(input: String) {
@@ -87,8 +92,13 @@ class Day22: Day {
         let coords = components.last!.components(separatedBy: ",").compactMap({ Int($0) })
         let target = (x: coords.first!, y: coords.last!)
         
-        assert(Cavern(target: (x: 10, y: 10), depth: 510).riskLevel == 114)
+        // Create the cavern
         let cavern = Cavern(target: target, depth: depth)
+        
+        assert(Cavern(target: (x: 10, y: 10), depth: 510).riskLevel == 114)
         print("Risk level of the cavern for Day 21-1 is \(cavern.riskLevel)")
+        
+        assert(Cavern(target: (x: 10, y: 10), depth: 510).minimumReachTime == 45)
+        print("Minimum time to reach the target for Day 21-2 is \(cavern.minimumReachTime)")
     }
 }
