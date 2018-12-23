@@ -20,6 +20,7 @@
 		E962A74C21BD113D005689DA /* Day9.swift in Sources */ = {isa = PBXBuildFile; fileRef = E962A74B21BD113D005689DA /* Day9.swift */; };
 		E96FA7A121C0E746000DBEAD /* Day12.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96FA7A021C0E746000DBEAD /* Day12.swift */; };
 		E973D20F21CE40B00064F084 /* Day22.swift in Sources */ = {isa = PBXBuildFile; fileRef = E973D20E21CE40B00064F084 /* Day22.swift */; };
+		E98A99B921CF7ADF00BEDEEF /* Day23.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98A99B821CF7ADF00BEDEEF /* Day23.swift */; };
 		E98B3BFC21B72D790034058B /* Input.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3BFB21B72D790034058B /* Input.swift */; };
 		E98B3C0021B72EFD0034058B /* Day2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3BFF21B72EFD0034058B /* Day2.swift */; };
 		E98B3C0221B72F6B0034058B /* Day1.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B3C0121B72F6B0034058B /* Day1.swift */; };
@@ -75,6 +76,8 @@
 		E96FA7A221C0E757000DBEAD /* day12.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day12.txt; sourceTree = "<group>"; };
 		E973D20E21CE40B00064F084 /* Day22.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day22.swift; sourceTree = "<group>"; };
 		E973D21021CE40DD0064F084 /* day22.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day22.txt; sourceTree = "<group>"; };
+		E98A99B821CF7ADF00BEDEEF /* Day23.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day23.swift; sourceTree = "<group>"; };
+		E98A99BA21CF7B0C00BEDEEF /* day23.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day23.txt; sourceTree = "<group>"; };
 		E98B3BFB21B72D790034058B /* Input.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Input.swift; sourceTree = "<group>"; };
 		E98B3BFD21B72EBF0034058B /* day1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day1.txt; sourceTree = "<group>"; };
 		E98B3BFE21B72ECF0034058B /* day2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = day2.txt; sourceTree = "<group>"; };
@@ -137,6 +140,7 @@
 				E904FEBE21CB7EC8007FCA84 /* Day20.swift */,
 				71EA1A0321CCE06C00A943DF /* Day21.swift */,
 				E973D20E21CE40B00064F084 /* Day22.swift */,
+				E98A99B821CF7ADF00BEDEEF /* Day23.swift */,
 			);
 			path = Days;
 			sourceTree = "<group>";
@@ -167,6 +171,7 @@
 				E904FEBD21CB7DC7007FCA84 /* day20.txt */,
 				71EA1A0221CCE04000A943DF /* day21.txt */,
 				E973D21021CE40DD0064F084 /* day22.txt */,
+				E98A99BA21CF7B0C00BEDEEF /* day23.txt */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -260,6 +265,7 @@
 				E98B3C0621B79D880034058B /* Day5.swift in Sources */,
 				71BBC0D921BE5FDC00E41048 /* Day10.swift in Sources */,
 				E91E39B621B8EDD80054F06D /* Day6.swift in Sources */,
+				E98A99B921CF7ADF00BEDEEF /* Day23.swift in Sources */,
 				E9AD333621B507DD00EFD016 /* Day3.swift in Sources */,
 				E98B3C0421B730C40034058B /* shared.swift in Sources */,
 				717AA0AD21C2613800C7820E /* Day13.swift in Sources */,
