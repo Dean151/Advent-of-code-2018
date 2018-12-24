@@ -37,12 +37,34 @@ class Day23: Day {
         return abs(a.x - b.x) + abs(a.y - b.y) + abs(a.z - b.z)
     }
     
+    static func distance(fromOriginTo a: Position) -> Int {
+        return distance(from: (x: 0, y: 0, z: 0), to: a)
+    }
+    
+    static func bots(from input: String) -> [Nanobot] {
+        return input.components(separatedBy: .newlines).compactMap({ Nanobot.from(string: $0) })
+    }
+    
+    static func inRangeFromBiggestRange(with bots: [Nanobot]) -> Int {
+        let mainBot = bots.max(by: { $0.range < $1.range })!
+        let inRange = bots.filter({ distance(from: $0.position, to: mainBot.position) <= mainBot.range })
+        return inRange.count
+    }
+    
+    static func mostInRangePointDistance(with bots: [Nanobot]) -> Int {
+        let point = (x: 0, y: 0, z: 0) // TODO!
+        return distance(fromOriginTo: point)
+    }
+    
     static func run(input: String) {
-        let nanobots = input.components(separatedBy: .newlines).compactMap({ Nanobot.from(string: $0) })
+        let nanobots = bots(from: input)
         
-        // Find the max range
-        let mainBot = nanobots.max(by: { $0.range < $1.range })!
-        let inRange = nanobots.filter({ distance(from: $0.position, to: mainBot.position) <= mainBot.range })
-        print("Number of bots in range for Day 23-1 is \(inRange.count)")
+        let example = "pos=<0,0,0>, r=4\npos=<1,0,0>, r=1\npos=<4,0,0>, r=3\npos=<0,2,0>, r=1\npos=<0,5,0>, r=3\npos=<0,0,3>, r=1\npos=<1,1,1>, r=1\npos=<1,1,2>, r=1\npos=<1,3,1>, r=1"
+        assert(inRangeFromBiggestRange(with: bots(from: example)) == 7)
+        print("Number of bots in range for Day 23-1 is \(inRangeFromBiggestRange(with: nanobots))")
+        
+        let example2 = "pos=<10,12,12>, r=2\npos=<12,14,12>, r=2\npos=<16,12,12>, r=4\npos=<14,14,14>, r=6\npos=<50,50,50>, r=200\npos=<10,10,10>, r=5"
+        assert(mostInRangePointDistance(with: bots(from: example2)) == 36)
+        print("Distance from most \"in-range\" point for Day 23-2 is \(mostInRangePointDistance(with: nanobots))")
     }
 }
