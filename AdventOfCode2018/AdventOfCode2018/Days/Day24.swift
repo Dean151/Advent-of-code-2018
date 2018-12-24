@@ -21,7 +21,6 @@ class Day24: Day {
         
         typealias Attack = (type: AttackType, damage: Int)
         
-        let id: Int
         let team: Team
         let initiative: Int
         let attack: Attack
@@ -30,8 +29,7 @@ class Day24: Day {
         let hitPoints: Int
         var numberOfUnits: Int
         
-        init(id: Int, team: Team, initiative: Int, attack: Attack, immunities: Set<AttackType>, weaknesses: Set<AttackType>, hitPoints: Int, initialNumberOfUnits: Int) {
-            self.id = id
+        init(team: Team, initiative: Int, attack: Attack, immunities: Set<AttackType>, weaknesses: Set<AttackType>, hitPoints: Int, initialNumberOfUnits: Int) {
             self.team = team
             self.initiative = initiative
             self.attack = attack
@@ -41,14 +39,35 @@ class Day24: Day {
             self.numberOfUnits = initialNumberOfUnits
         }
         
+        static let regex = try! NSRegularExpression(pattern: "^(\\d+) units each with (\\d+) hit points (?:\\((.+)\\)\\ )?with an attack that does (\\d+) ([a-z]+) damage at initiative (\\d+)$", options: .caseInsensitive)
+        
         static func from(line: String, team: Team) -> Group? {
-            // REGEX!
-            // ^(\d+) units each with (\d+) hit points (?:\((.+)\)\ )?with an attack that does (\d+) ([a-z]+) damage at initiative (\d+)$
+            let matches = Group.regex.matches(in: line, options: [], range: NSRange(location: 0, length: line.count))
+            guard let match = matches.first else {
+                return nil
+            }
+            let nbUnits = Int(match.group(at: 1, in: line))!
+            let hitPoints = Int(match.group(at: 2, in: line))!
+            let attackValue = Int(match.group(at: 4, in: line))!
+            let attackType = AttackType(rawValue: match.group(at: 5, in: line))!
+            let initiative = Int(match.group(at: 6, in: line))!
             
-            // TODO: parse !
-            print(line)
-            print(team)
-            return nil
+            var immunities = Set<AttackType>()
+            var weaknesses = Set<AttackType>()
+            for types in match.group(at: 3, in: line).components(separatedBy: "; ") {
+                if types.hasPrefix("immune to ") {
+                    types.dropFirst("immune to ".count).components(separatedBy: ", ").compactMap({ AttackType(rawValue: $0) }).forEach({
+                        immunities.insert($0)
+                    })
+                }
+                if types.hasPrefix("weak to ") {
+                    types.dropFirst("weak to ".count).components(separatedBy: ", ").compactMap({ AttackType(rawValue: $0) }).forEach({
+                        weaknesses.insert($0)
+                    })
+                }
+            }
+            
+            return Group(team: team, initiative: initiative, attack: (type: attackType, damage: attackValue), immunities: immunities, weaknesses: weaknesses, hitPoints: hitPoints, initialNumberOfUnits: nbUnits)
         }
     }
     
@@ -74,6 +93,6 @@ class Day24: Day {
     
     static func run(input: String) {
         let units = parseUnits(input: input)
-        print(units)
+        print(units.count)
     }
 }
