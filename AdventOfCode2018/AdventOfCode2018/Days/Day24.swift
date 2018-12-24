@@ -42,6 +42,9 @@ class Day24: Day {
         }
         
         static func from(line: String, team: Team) -> Group? {
+            // REGEX!
+            // ^(\d+) units each with (\d+) hit points (?:\((.+)\)\ )?with an attack that does (\d+) ([a-z]+) damage at initiative (\d+)$
+            
             // TODO: parse !
             print(line)
             print(team)
