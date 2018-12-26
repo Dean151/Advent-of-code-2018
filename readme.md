@@ -43,6 +43,6 @@ Some attention will be ported to performance consideration, let try to make that
 | **21** | **9min 16s**    | 12446070 | 13928239   |
 | **22** | 4,119s          | 6256     | 973        |
 | **23** | *0,026s*        | 219      | -          |
-| **24** | TBA             | -        | -          |
+| **24** | TBA             | 26868    | -          |
 
 \* : Best elapsed time of the complete solution for my MacBook Pro 13in mid 2013 in "Release" mode
