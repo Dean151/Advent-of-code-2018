@@ -41,23 +41,19 @@ class Day24: Day {
             self.numberOfUnits = initialNumberOfUnits
         }
         
-        func attackDammage(boost: Int) -> Int {
-            return attack.damage + (team == .immuneSystem ? boost : 0)
+        var effectivePower: Int {
+            return numberOfUnits * attack.damage
         }
         
-        func effectivePower(boost: Int) -> Int {
-            return numberOfUnits * attackDammage(boost: boost)
-        }
-        
-        func potentialDamage(madeBy attacker: Group, boost: Int) -> Int {
+        func potentialDamage(madeBy attacker: Group) -> Int {
             if immunities.contains(attacker.attack.type) {
                 return 0
             }
-            return (weaknesses.contains(attacker.attack.type) ? 2 : 1) * attacker.effectivePower(boost: boost)
+            return (weaknesses.contains(attacker.attack.type) ? 2 : 1) * attacker.effectivePower
         }
         
-        func attack(defender: Group, boost: Int) {
-            let damage = defender.potentialDamage(madeBy: self, boost: boost)
+        func attack(defender: Group) {
+            let damage = defender.potentialDamage(madeBy: self)
             defender.numberOfUnits -= min(defender.numberOfUnits, damage / defender.hitPoints)
         }
         
@@ -71,14 +67,14 @@ class Day24: Day {
         
         static let regex = try! NSRegularExpression(pattern: "^(\\d+) units each with (\\d+) hit points (?:\\((.+)\\)\\ )?with an attack that does (\\d+) ([a-z]+) damage at initiative (\\d+)$", options: .caseInsensitive)
         
-        static func from(id: Int, line: String, team: Team) -> Group? {
+        static func from(id: Int, line: String, team: Team, boost: Int) -> Group? {
             let matches = Group.regex.matches(in: line, options: [], range: NSRange(location: 0, length: line.count))
             guard let match = matches.first else {
                 return nil
             }
             let nbUnits = Int(match.group(at: 1, in: line))!
             let hitPoints = Int(match.group(at: 2, in: line))!
-            let attackValue = Int(match.group(at: 4, in: line))!
+            let attackValue = Int(match.group(at: 4, in: line))! + (team == .immuneSystem ? boost : 0)
             let attackType = AttackType(rawValue: match.group(at: 5, in: line))!
             let initiative = Int(match.group(at: 6, in: line))!
             
@@ -101,7 +97,7 @@ class Day24: Day {
         }
     }
     
-    static func parseUnits(input: String) -> [Group] {
+    static func parseUnits(input: String, boost: Int = 0) -> [Group] {
         var id = 1
         var groups = [Group]()
         var team = Group.Team.immuneSystem
@@ -116,7 +112,7 @@ class Day24: Day {
                 team = .infection
                 continue
             }
-            guard let group = Group.from(id: id, line: line, team: team) else {
+            guard let group = Group.from(id: id, line: line, team: team, boost: boost) else {
                 continue
             }
             groups.append(group)
@@ -128,17 +124,16 @@ class Day24: Day {
     static func fight(units: [Group], boost: Int = 0) -> (winner: Group.Team, leftUnits: [Group]) {
         // Let make stuff mutable
         var units = units
-        
         mainLoop: while true {
             
             // Target Selection Phase
             var targets = [Group: Group?]()
             var targetted = Set<Group>()
             for attacker in units.sorted(by: {
-                if $0.effectivePower(boost: boost) == $1.effectivePower(boost: boost) {
+                if $0.effectivePower == $1.effectivePower {
                     return $0.initiative > $1.initiative
                 }
-                return $0.effectivePower(boost: boost) > $1.effectivePower(boost: boost)
+                return $0.effectivePower > $1.effectivePower
             }) {
                 let potentialTargets = units.filter({ $0.team != attacker.team })
                 if potentialTargets.isEmpty {
@@ -146,10 +141,10 @@ class Day24: Day {
                 }
                 // Find the one with the most damage
                 if let target = potentialTargets.filter({ !targetted.contains($0) }).max(by: {
-                    if $0.potentialDamage(madeBy: attacker, boost: boost) == $1.potentialDamage(madeBy: attacker, boost: boost) {
-                        return $0.effectivePower(boost: boost) < $1.effectivePower(boost: boost)
+                    if $0.potentialDamage(madeBy: attacker) == $1.potentialDamage(madeBy: attacker) {
+                        return $0.effectivePower < $1.effectivePower
                     }
-                    return $0.potentialDamage(madeBy: attacker, boost: boost) < $1.potentialDamage(madeBy: attacker, boost: boost)
+                    return $0.potentialDamage(madeBy: attacker) < $1.potentialDamage(madeBy: attacker)
                 }) {
                     targets.updateValue(target, forKey: attacker)
                     targetted.insert(target)
@@ -161,7 +156,7 @@ class Day24: Day {
                 guard let target = target, attacker.numberOfUnits > 0 && target.numberOfUnits > 0 else {
                     continue
                 }
-                attacker.attack(defender: target, boost: boost)
+                attacker.attack(defender: target)
             }
             
             // Removing dead units
@@ -173,18 +168,13 @@ class Day24: Day {
     }
     
     static func run(input: String) {
-        let units = parseUnits(input: input)
         
-        var outcome = fight(units: units)
+        var outcome = fight(units: parseUnits(input: input))
         print("Number of left units for Day 24-1 is \(outcome.leftUnits.reduce(0, { $0 + $1.numberOfUnits }))")
         
         var boost = 0
-        while outcome.winner != .immuneSystem {
-            boost += 1
-            outcome = fight(units: units, boost: boost)
-            print("\(boost) - \(outcome.winner.rawValue) - \(outcome.leftUnits.reduce(0, { $0 + $1.numberOfUnits }))")
-        }
-        print("Minimum boost to make immune system win for Day 24-2 is \(boost)")
+        outcome = fight(units: parseUnits(input: input, boost: boost))
+        print(outcome)
+        print("Number of left units for Day 24-2 is \(outcome.leftUnits.reduce(0, { $0 + $1.numberOfUnits }))")
     }
 }
-
